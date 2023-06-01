@@ -10,7 +10,7 @@
 
 
 // INCLUDES
-//#include "utils.h"
+#include "utils.h"
 #include "gpio.h"
 #include <stdio.h>
 //#include "adc.h"
@@ -20,6 +20,7 @@
 #include "usart.h"
 #include <string.h>
 #include "lights.h"
+#include "ecph.h"
 
 
 // DEFINES

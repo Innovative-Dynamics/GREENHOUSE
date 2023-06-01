@@ -1,7 +1,6 @@
-../Core/Src/lights.c:272:6:readNaturalLight	40	static
-../Core/Src/lights.c:299:6:HAL_ADC_ConvCpltCallback	16	static
-../Core/Src/lights.c:310:6:setLed	16	static
-../Core/Src/lights.c:323:6:setBrightness	40	static
-../Core/Src/lights.c:347:6:ws2812SendData	32	static
-../Core/Src/lights.c:389:6:HAL_TIM_PWM_PulseFinishedCallback	16	static
-../Core/Src/lights.c:396:6:setLight	24	static
+../Core/Src/lights.c:28:6:readNaturalLight	40	static
+../Core/Src/lights.c:55:6:setLed	16	static
+../Core/Src/lights.c:68:6:setBrightness	40	static
+../Core/Src/lights.c:92:6:ws2812SendData	32	static
+../Core/Src/lights.c:134:6:HAL_TIM_PWM_PulseFinishedCallback	16	static
+../Core/Src/lights.c:141:6:setLight	24	static

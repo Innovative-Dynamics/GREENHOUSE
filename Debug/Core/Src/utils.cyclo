@@ -1,0 +1,7 @@
+utils.c:23:6:reset_water_reading_done	1
+utils.c:28:7:water_reading_done	1
+utils.c:33:6:reset_lights_reading_done	1
+utils.c:38:7:lights_reading_done	1
+utils.c:44:7:get_water_grow_tank_level	1
+utils.c:49:7:get_lights_voltage_value	1
+utils.c:54:6:HAL_ADC_ConvCpltCallback	2

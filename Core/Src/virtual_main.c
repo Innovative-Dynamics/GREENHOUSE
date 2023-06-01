@@ -33,10 +33,12 @@ long long int water_time_prev = 0;
 float temp = 0;
 float humidity = 0;
 
-machine state = LIGHTS_PROCEDURE;
-uint16_t water_tank_level;
+char data[8];
 
-char dataToSend[8];
+
+// LIGHTS PROCEDURE WORKING DONT TOUCH
+machine state = ECPH_PROCEDURE;
+uint16_t water_tank_level;
 
 
 // IMPLEMENTARE UN TIMER GLOBALE!
@@ -186,25 +188,59 @@ void virtual_main()
 //				}
 //			}
 //
-//	case(ECPH_PROCEDURE):
+	case(ECPH_PROCEDURE):
+
+			if (!is_ec_initialized())
+			{
+				ec_init();
+			}
+			// CHECK FOR 5 SECONDS
+			else
+			{
+				if (!is_ec_value_readed())
+				{
+					ec_read(&hadc3);
+				}
+				else
+				{
+					if (!is_counting)
+					{
+						is_counting = 1;
+						time_prev = __HAL_TIM_GET_COUNTER(&htim2);
+					}
+					else
+					{
+						if (__HAL_TIM_GET_COUNTER(&htim2) - time_prev >= 2000000)
+						{
+							char data2[32];
+							sprintf(data2, "EC: %f \n\r", get_EC());
+
+							HAL_UART_Transmit(&huart2, (uint8_t*)data2, strlen(data2), HAL_MAX_DELAY);
+
+							if (!is_ph_value_readed())
+							{
+								ph_read(&hadc3);
+							}
+							else
+							{
+								char data1[32];
+								sprintf(data1, "PH: %f \n\r", get_PH());
+
+								HAL_UART_Transmit(&huart2, (uint8_t*)data1, strlen(data1), HAL_MAX_DELAY);
+
+								reset_ec_initialized();
+
+								reset_is_ec_value_readed();
+								reset_is_ph_value_readed();
+								is_counting = 0;
+							}
+
+						}
+					}
+				}
+			}
+			break;
 //
-//			if (!ecph_initialization_called)
-//			{
-//				ec_init();
-//
-//				ecph_initialization_called = 1;
-//			}
-//			else if (is_ec_initialized())
-//			{
-//
-//				if (!is_ec_value_readed())
-//				{
-//					ec_read(&hadc3);
-//				}
-//				else if (!is_ph_value_readed())
-//				{
-//					ph_read(&hadc3);
-//				}
 //				else if (get_EC() < EC_SETPOINT)
 //				{
 //					// DA FARE CONTROLLO SUL PH
@@ -219,7 +255,7 @@ void virtual_main()
 //					break;
 //				}
 //			}
-//
+
 //	case (MIX_PROCEDURE):
 //
 //			if (!is_counting)
@@ -258,13 +294,6 @@ void virtual_main()
 	case(LIGHTS_PROCEDURE):
 			// STATUS = 1 - LIGHTS ON
 			// STATUS = 0 - LIGHTS OFF
-			//set_lights(&htim1, &hadc2, 1);
-//			readNaturalLight();
-//			sprintf(dataToSend, "HERE \n");
-//
-//			// Transmit the data over UART2
-//			HAL_UART_Transmit(&huart2, (uint8_t*)dataToSend, strlen(dataToSend), HAL_MAX_DELAY);
-//
 			setLight(1);
 			break;
 	default:
@@ -279,10 +308,10 @@ void virtual_main()
 //
 //		// CHECK WATER STATUS
 //		is_default_check = 1;
-////		state = ECPH_PROCEDURE;
-//
-//		// LIGHTS OFF
-////		set_lights(&htim1, &hadc2, 0);
+//		state = ECPH_PROCEDURE;
+
+		// LIGHTS OFF
+		setLight(0);
 		break;
 	}
 }
