@@ -1,0 +1,6 @@
+stepper.c:12:7:are_nutrs_deployed	1
+stepper.c:17:6:reset_are_nutrs_deployed	1
+stepper.c:22:6:delay	2
+stepper.c:28:6:stepper_set_rpm	1
+stepper.c:33:6:stepper_half_drive	9
+stepper.c:94:6:stepper_step_angle	6

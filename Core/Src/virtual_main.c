@@ -26,6 +26,7 @@ _Bool is_reading_adc = 0;
 _Bool is_counting = 0;
 
 _Bool dht11_initialization = 0;
+_Bool water_status_initialized = 0;
 
 long long int time_prev = 0;
 long long int water_time_prev = 0;
@@ -33,11 +34,19 @@ long long int water_time_prev = 0;
 float temp = 0;
 float humidity = 0;
 
+float EC_Value = 0;
+float PH_Value = 0;
+
 char data[8];
 
 
 // LIGHTS PROCEDURE WORKING DONT TOUCH
-machine state = ECPH_PROCEDURE;
+// ECPH PROCEDURE WORKING DONT TOUCH
+// MIX PROCEDURE WORKING DONT TOUCH
+// WATER LOAD PROCEDURE WORKING DONT TOUCH
+// WATER UNLOAD PROCEDURE WORKING DONT TOUCH
+// WATER READING SENSOR WORKING DONT TOUCH
+machine state = WATER_LOAD_PROCEDURE;
 uint16_t water_tank_level;
 
 
@@ -48,23 +57,36 @@ void virtual_main()
 {
 	switch(state)
 	{
-//	case(WATER_STATUS_CHECK):
+	case(WATER_STATUS_CHECK):
+
+		// CHECK THE WATER LEVEL OF THE GROW TANK
 //
-//		// CHECK THE WATER LEVEL OF THE GROW TANK
-//		if (!is_reading_adc)
+//		if (!water_status_initialized)
 //		{
-//			HAL_ADC_Start_IT(&hadc1);
-//			is_reading_adc = 1;
+//			readLevelInterrupt();
+//			water_status_initialized = 1;
 //		}
-//		else if (water_reading_done())
+//		else
 //		{
-//			is_reading_adc = 0;
-//			reset_water_reading_done();
-//
-//
-//
-//			if (get_water_grow_tank_level() < ROOT_LEVEL)
+//			if (!get_water_level())
 //			{
+//
+//			}
+//		}
+
+
+		if (!is_reading_adc)
+		{
+			HAL_ADC_Start_IT(&hadc1);
+			is_reading_adc = 1;
+		}
+		else if (water_reading_done())
+		{
+			is_reading_adc = 0;
+			reset_water_reading_done();
+
+			if (get_water_value() < ROOT_LEVEL)
+			{
 //				if (!is_counting)
 //				{
 //					water_time_prev = __HAL_TIM_GET_COUNTER(&htim2);
@@ -76,7 +98,7 @@ void virtual_main()
 //					if (__HAL_TIM_GET_COUNTER(&htim2) - water_time_prev >= 1.8e+9)
 //					{
 //						// WATER LEVEL CHECK TO AVOID EMPTY PUMP RUNS
-//						if (!get_water_read())
+//						if (!get_water_level())
 //						{
 //							water_tank_level = read_water_level();
 //						}
@@ -103,10 +125,10 @@ void virtual_main()
 //						}
 //					}
 //				}
-//			}
-//			else
-//			{
-//				// WATER UNLOAD
+			}
+			else
+			{
+				// WATER UNLOAD
 //				if (!is_counting)
 //				{
 //					water_time_prev = __HAL_TIM_GET_COUNTER(&htim2);
@@ -122,43 +144,49 @@ void virtual_main()
 //					}
 //
 //				}
-//			}
-//		}
+			}
+		}
+
+	case(WATER_LOAD_PROCEDURE):
+
+			if (!loading)
+			{
+				HAL_GPIO_WritePin(WATER_PUMP_GPIO_Port, WATER_PUMP_Pin, GPIO_PIN_SET);
+				loading = 1;
+			}
+			else
+			{
+				if (!is_reading_adc)
+				{
+					HAL_ADC_Start_IT(&hadc1);
+					is_reading_adc = 1;
+				}
+				else if (water_reading_done())
+				{
+					// WAIT FOR THE ADC TO FINISH READING THE VALUE
+					is_reading_adc = 0;
+					reset_water_reading_done();
+
+//					char data1[32];
+//					sprintf(data1, "WATER LEVEL: %f \n\r", get_water_value());
 //
-//	case(WATER_LOAD_PROCEDURE):
-//
-//			if (!loading)
-//			{
-//				HAL_GPIO_WritePin(WATER_PUMP_GPIO_Port, WATER_PUMP_Pin, GPIO_PIN_SET);
-//				loading = 1;
-//			}
-//			else
-//			{
-//				if (!is_reading_adc)
-//				{
-//					HAL_ADC_Start_IT(&hadc1);
-//					is_reading_adc = 1;
-//				}
-//				else if (water_reading_done())
-//				{
-//					// WAIT FOR THE ADC TO FINISH READING THE VALUE
-//					is_reading_adc = 0;
-//					reset_water_reading_done();
-//
-//					if (get_water_grow_tank_level() >= ROOT_LEVEL)
-//					{
-//						// STOP THE PUMP
-//						HAL_GPIO_WritePin(WATER_PUMP_GPIO_Port, WATER_PUMP_Pin, GPIO_PIN_RESET);
-//						loading = 0;
-//
-//						// AFTER LOAD COMPLETED THEN THE WATER ISNT READY ANYMORE
-//						water_ready = 0;
-//						state = WATER_STATUS_CHECK;
-//						break;
-//					}
-//				}
-//			}
-//
+//					HAL_UART_Transmit(&huart2, (uint8_t*)data1, strlen(data1), HAL_MAX_DELAY);
+
+					if (get_water_value() >= 120)
+					{
+						// STOP THE PUMP
+						HAL_GPIO_WritePin(WATER_PUMP_GPIO_Port, WATER_PUMP_Pin, GPIO_PIN_RESET);
+
+						// AFTER LOAD COMPLETED THEN THE WATER ISNT READY ANYMORE
+						water_ready = 0;
+						loading = 0;
+						state = WATER_STATUS_CHECK;
+
+					}
+				}
+			}
+			break;
+
 //	case(WATER_UNLOAD_PROCEDURE):
 //
 //			if (!unloading)
@@ -203,79 +231,95 @@ void virtual_main()
 				}
 				else
 				{
-					if (!is_counting)
-					{
-						is_counting = 1;
-						time_prev = __HAL_TIM_GET_COUNTER(&htim2);
-					}
-					else
-					{
-						if (__HAL_TIM_GET_COUNTER(&htim2) - time_prev >= 2000000)
-						{
-							char data2[32];
-							sprintf(data2, "EC: %f \n\r", get_EC());
 
-							HAL_UART_Transmit(&huart2, (uint8_t*)data2, strlen(data2), HAL_MAX_DELAY);
+					EC_Value = get_EC();
+					EC_Value = 0.5;
 
+//					if (!is_counting)
+//					{
+//						is_counting = 1;
+//						time_prev = __HAL_TIM_GET_COUNTER(&htim2);
+//					}
+//					else
+//					{
+//						if (__HAL_TIM_GET_COUNTER(&htim2) - time_prev >= 2000000)
+//						{
 							if (!is_ph_value_readed())
 							{
 								ph_read(&hadc3);
 							}
 							else
 							{
+								PH_Value = get_PH();
+
+								if (EC_Value < EC_SETPOINT)
+								{
+									state = MIX_PROCEDURE;
+								}
+								else
+								{
+									state = WATER_STATUS_CHECK;
+									water_ready = 1;
+								}
+
+								char data2[32];
+								sprintf(data2, "EC: %f \n\r", EC_Value);
+
+								HAL_UART_Transmit(&huart2, (uint8_t*)data2, strlen(data2), HAL_MAX_DELAY);
+
 								char data1[32];
-								sprintf(data1, "PH: %f \n\r", get_PH());
+								sprintf(data1, "PH: %f \n\r", PH_Value);
 
 								HAL_UART_Transmit(&huart2, (uint8_t*)data1, strlen(data1), HAL_MAX_DELAY);
 
 								reset_ec_initialized();
-
 								reset_is_ec_value_readed();
 								reset_is_ph_value_readed();
 								is_counting = 0;
 							}
 
-						}
+//						}
+//					}
+				}
+			}
+			break;
+
+	case (MIX_PROCEDURE):
+			if (!are_nutrs_deployed())
+			{
+				stepper_step_angle(360, 1, 10);
+			}
+			else
+			{
+				if (!is_counting)
+				{
+					char data1[32];
+					sprintf(data1, "NUTRS DEPLOYED \n\r");
+					HAL_UART_Transmit(&huart2, (uint8_t*)data1, strlen(data1), HAL_MAX_DELAY);
+
+					HAL_GPIO_WritePin(MIX_PUMP_GPIO_Port, MIX_PUMP_Pin, GPIO_PIN_SET);
+					is_counting = 1;
+					time_prev = __HAL_TIM_GET_COUNTER(&htim2);
+				}
+				else
+				{
+					if (__HAL_TIM_GET_COUNTER(&htim2) - time_prev >= 7000000)
+					{
+						char data1[32];
+						sprintf(data1, "MIXED \n\r");
+						HAL_UART_Transmit(&huart2, (uint8_t*)data1, strlen(data1), HAL_MAX_DELAY);
+
+						HAL_GPIO_WritePin(MIX_PUMP_GPIO_Port, MIX_PUMP_Pin, GPIO_PIN_RESET);
+
+						is_counting = 0;
+						reset_are_nutrs_deployed();
+//						state = WATER_STATUS_CHECK;
+						water_ready = 1;
 					}
 				}
 			}
 			break;
-//
-//				else if (get_EC() < EC_SETPOINT)
-//				{
-//					// DA FARE CONTROLLO SUL PH
-//					state = MIX_PROCEDURE;
-//					mixing = 0;
-//					break;
-//				}
-//				else
-//				{
-//					state = WATER_STATUS_CHECK;
-//					water_ready = 1;
-//					break;
-//				}
-//			}
 
-//	case (MIX_PROCEDURE):
-//
-//			if (!is_counting)
-//			{
-//				stepper_step_angle(360, 0, 10);
-//				HAL_GPIO_WritePin(MIX_PUMP_GPIO_Port, MIX_PUMP_Pin, GPIO_PIN_SET);
-//				is_counting = 1;
-//				time_prev = __HAL_TIM_GET_COUNTER(&htim2);
-//			}
-//			else
-//			{
-//				if (__HAL_TIM_GET_COUNTER(&htim2) - time_prev >= 7000000)
-//				{
-//					HAL_GPIO_WritePin(MIX_PUMP_GPIO_Port, MIX_PUMP_Pin, GPIO_PIN_RESET);
-//					state = WATER_STATUS_CHECK;
-//					water_ready = 1;
-//					break;
-//				}
-//			}
-//
 //	case(DHT11_PROCEDURE):
 //
 //			if (!dht11_procedure_done())

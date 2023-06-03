@@ -51,16 +51,16 @@ void reset_ec_initialized ()
 }
 
 
-_Bool read_ec ()
-{
-	return reading_ec;
-}
+//_Bool read_ec ()
+//{
+//	return reading_ec;
+//}
 
 
-void set_adEC (float adEC_val)
-{
-	adEC = adEC_val;
-}
+//void set_adEC (float adEC_val)
+//{
+//	adEC = adEC_val;
+//}
 
 
 _Bool is_ec_value_readed ()
@@ -75,16 +75,16 @@ void reset_is_ec_value_readed ()
 }
 
 
-_Bool read_ph ()
-{
-	return reading_ph;
-}
+//_Bool read_ph ()
+//{
+//	return reading_ph;
+//}
 
 
-void set_adPH (float adPH_val)
-{
-	adPH = adPH_val;
-}
+//void set_adPH (float adPH_val)
+//{
+//	adPH = adPH_val;
+//}
 
 
 _Bool is_ph_value_readed ()
@@ -173,22 +173,15 @@ void ec_init ()
 //	ec_value_readed = 1;
 //}
 
-// Funzionamento EC meter
-void ec_read(ADC_HandleTypeDef *hadc)
-{ //funzione dichiarata nel .h e chiamata dal main
+void ec_read (ADC_HandleTypeDef* hadc)
+{
 
-//	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_SET); //Imposto il pin ECPower(PC0 -> A5) a livello alto: 3.3v
-//
-//	HAL_Delay(6000); //Attendo che il PC0 si stabilizzi a 3.3v
-
-	// Seleziona il canale ADC desiderato (CHANNEL2)
 	set_ec_channel();
 
-//	HAL_ADC_Start_IT(hadc);
-
-	HAL_ADC_Start(&hadc3); // avvia la conversione ADC da EC_Read(PC1 -> A4)
-	HAL_ADC_PollForConversion(&hadc3, 100); // attendi la fine della conversione
-	adEC = HAL_ADC_GetValue(&hadc3);//Leggo il valore analog
+	HAL_ADC_Start(hadc); // avvia la conversione ADC da EC_Read(PC1 -> A4)
+	HAL_ADC_PollForConversion(hadc, 100); // attendi la fine della conversione
+	adEC = HAL_ADC_GetValue(hadc);//Leggo il valore analog
+	HAL_ADC_Stop(hadc);
 
 	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_RESET); //Imposto il pin ECPower(PC0 -> A5) a livello basso: 0v
 
@@ -216,19 +209,14 @@ void ec_read(ADC_HandleTypeDef *hadc)
 	ec_value_readed = 1;
 }
 
-void ph_read (ADC_HandleTypeDef *hadc)
+void ph_read (ADC_HandleTypeDef* hadc)
 {
 	set_ph_channel();
 
-//	reading_ec = 0;
-//	reading_ph = 1;
-
-//	HAL_ADC_Start_IT(hadc); // avvia la conversione ADC da EC_Read(PC1 -> A4)
-
-	HAL_ADC_Start(&hadc3);
-	HAL_ADC_PollForConversion(&hadc3, 100);
-	adPH = HAL_ADC_GetValue(&hadc3);
-//	HAL_ADC_Stop(&hadc3);
+	HAL_ADC_Start(hadc);
+	HAL_ADC_PollForConversion(hadc, 100);
+	adPH = HAL_ADC_GetValue(hadc);
+	HAL_ADC_Stop(hadc);
 
 	VdropPH = (Vin * adPH) / 1024.0; //converto bit(adPH) in tensione(VdropPH) (precision_ADC = 2^10 -> = 1024)
 

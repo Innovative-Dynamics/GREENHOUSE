@@ -8,7 +8,6 @@
 #include "utils.h"
 
 int counter = 0;
-int delay = 0;
 _Bool timer = 0;
 
 _Bool counting = 0;
@@ -20,6 +19,10 @@ _Bool water_reading = 0;
 float voltage_value = 0;
 _Bool lights_reading = 0;
 
+float water_value = 0;
+
+
+
 void reset_water_reading_done ()
 {
 	water_reading = 0;
@@ -28,6 +31,11 @@ void reset_water_reading_done ()
 _Bool water_reading_done ()
 {
 	return water_reading;
+}
+
+float get_water_value ()
+{
+	return water_value;
 }
 
 void reset_lights_reading_done ()
@@ -41,10 +49,10 @@ _Bool lights_reading_done ()
 }
 
 
-float get_water_grow_tank_level ()
-{
-	return acquired_value_ADC_volt;
-}
+//float get_water_grow_tank_level ()
+//{
+//	return acquired_value_ADC_volt;
+//}
 
 float get_lights_voltage_value ()
 {
@@ -88,5 +96,11 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
 		// READ FROM THE PHOTORESISTENCE
 		HAL_ADC_Stop_IT(hadc);
 		voltage_value = HAL_ADC_GetValue(hadc);
+	}
+	else if (hadc == &hadc1)
+	{
+		HAL_ADC_Stop_IT(hadc);
+		water_value = HAL_ADC_GetValue(hadc);
+		water_reading = 1;
 	}
 }

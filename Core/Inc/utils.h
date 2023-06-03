@@ -15,8 +15,8 @@
 #include "ecph.h"
 
 _Bool water_reading_done ();
-float get_water_grow_tank_level ();
 void reset_water_reading_done ();
+float get_water_value ();
 
 _Bool lights_reading_done ();
 void reset_lights_reading_done ();

@@ -15,9 +15,10 @@
 #include <stdio.h>
 //#include "adc.h"
 //#include "ultrasonic.h"
-//#include "stepper.h"
+#include "stepper.h"
 //#include "dht11.h"
 #include "usart.h"
+//#include "water_level_sensor.h"
 #include <string.h>
 #include "lights.h"
 #include "ecph.h"
@@ -32,7 +33,7 @@
 #define EC_SETPOINT 1
 
 // WATER GROW TANK LEVEL
-#define ROOT_LEVEL 10
+#define ROOT_LEVEL 124
 
 
 // STATE MACHINE

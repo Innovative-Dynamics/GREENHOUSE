@@ -1,0 +1,4 @@
+../Core/Src/water_level_sensor.c:19:7:get_water_level	4	static
+../Core/Src/water_level_sensor.c:24:6:convertLevel	16	static
+../Core/Src/water_level_sensor.c:36:6:readLevelPolling	8	static
+../Core/Src/water_level_sensor.c:45:6:readLevelInterrupt	8	static

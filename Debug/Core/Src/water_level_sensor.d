@@ -1,4 +1,5 @@
-Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
+Core/Src/water_level_sensor.o: ../Core/Src/water_level_sensor.c \
+ ../Core/Inc/adc.h ../Core/Inc/main.h \
  /home/envy0/STM32Cube/Repository/STM32Cube_FW_L4_V1.17.2/Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal.h \
  ../Core/Inc/stm32l4xx_hal_conf.h \
  /home/envy0/STM32Cube/Repository/STM32Cube_FW_L4_V1.17.2/Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_rcc.h \
@@ -30,11 +31,8 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  /home/envy0/STM32Cube/Repository/STM32Cube_FW_L4_V1.17.2/Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_tim_ex.h \
  /home/envy0/STM32Cube/Repository/STM32Cube_FW_L4_V1.17.2/Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_uart.h \
  /home/envy0/STM32Cube/Repository/STM32Cube_FW_L4_V1.17.2/Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_uart_ex.h \
- ../Core/Inc/adc.h ../Core/Inc/main.h ../Core/Inc/dma.h ../Core/Inc/tim.h \
- ../Core/Inc/usart.h ../Core/Inc/gpio.h ../Core/Inc/virtual_main.h \
- ../Core/Inc/utils.h ../Core/Inc/gpio.h ../Core/Inc/adc.h \
- ../Core/Inc/tim.h ../Core/Inc/ecph.h ../Core/Inc/usart.h \
- ../Core/Inc/stepper.h ../Core/Inc/lights.h ../Core/Inc/dma.h
+ ../Core/Inc/usart.h ../Core/Inc/gpio.h
+../Core/Inc/adc.h:
 ../Core/Inc/main.h:
 /home/envy0/STM32Cube/Repository/STM32Cube_FW_L4_V1.17.2/Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal.h:
 ../Core/Inc/stm32l4xx_hal_conf.h:
@@ -67,19 +65,5 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 /home/envy0/STM32Cube/Repository/STM32Cube_FW_L4_V1.17.2/Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_tim_ex.h:
 /home/envy0/STM32Cube/Repository/STM32Cube_FW_L4_V1.17.2/Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_uart.h:
 /home/envy0/STM32Cube/Repository/STM32Cube_FW_L4_V1.17.2/Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_uart_ex.h:
-../Core/Inc/adc.h:
-../Core/Inc/main.h:
-../Core/Inc/dma.h:
-../Core/Inc/tim.h:
 ../Core/Inc/usart.h:
 ../Core/Inc/gpio.h:
-../Core/Inc/virtual_main.h:
-../Core/Inc/utils.h:
-../Core/Inc/gpio.h:
-../Core/Inc/adc.h:
-../Core/Inc/tim.h:
-../Core/Inc/ecph.h:
-../Core/Inc/usart.h:
-../Core/Inc/stepper.h:
-../Core/Inc/lights.h:
-../Core/Inc/dma.h:

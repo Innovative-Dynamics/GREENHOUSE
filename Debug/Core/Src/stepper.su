@@ -1,0 +1,6 @@
+../Core/Src/stepper.c:12:7:are_nutrs_deployed	4	static
+../Core/Src/stepper.c:17:6:reset_are_nutrs_deployed	4	static
+../Core/Src/stepper.c:22:6:delay	16	static
+../Core/Src/stepper.c:28:6:stepper_set_rpm	16	static
+../Core/Src/stepper.c:33:6:stepper_half_drive	16	static
+../Core/Src/stepper.c:94:6:stepper_step_angle	40	static
