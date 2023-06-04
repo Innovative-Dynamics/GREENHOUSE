@@ -9,15 +9,15 @@
 
 _Bool nutrs_deployed = 0;
 
-_Bool are_nutrs_deployed ()
-{
-	return nutrs_deployed;
-}
-
-void reset_are_nutrs_deployed ()
-{
-	nutrs_deployed = 0;
-}
+//_Bool are_nutrs_deployed ()
+//{
+//	return nutrs_deployed;
+//}
+//
+//void reset_are_nutrs_deployed ()
+//{
+//	nutrs_deployed = 0;
+//}
 
 void delay(int us)
 {

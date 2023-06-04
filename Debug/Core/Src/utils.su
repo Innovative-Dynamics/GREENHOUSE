@@ -1,7 +1,1 @@
-../Core/Src/utils.c:26:6:reset_water_reading_done	4	static
-../Core/Src/utils.c:31:7:water_reading_done	4	static
-../Core/Src/utils.c:36:7:get_water_value	4	static
-../Core/Src/utils.c:41:6:reset_lights_reading_done	4	static
-../Core/Src/utils.c:46:7:lights_reading_done	4	static
-../Core/Src/utils.c:57:7:get_lights_voltage_value	4	static
-../Core/Src/utils.c:62:6:HAL_ADC_ConvCpltCallback	16	static
+../Core/Src/utils.c:58:6:HAL_ADC_ConvCpltCallback	16	static

@@ -1,15 +1,10 @@
 #include "lights.h"
 
-lightThreeshold naturalLightLevel; //natural light level set to low
+lightThreeshold naturalLightLevel = Low; //natural light level set to low
 
-float B = 1.3*pow(10.0,7);
-float voltageValue = 0.0;
-float m = -1.4;
+
  //Define WS2812 ledStripe_________________________
 
-#define LEDUsed 10
-#define USE_BRIGHTNESS 1 //1 if you want to control brightness, 0 if not
-#define PI 3.14
 uint8_t LED_Data[LEDUsed][4]; //Matrix to be used to store LED data
 uint8_t LED_Mode[LEDUsed][4]; //Matrix to be used for LED brightness
 
@@ -17,8 +12,12 @@ int violetColor400[3] = {131, 0, 181};
 int redColor680[3] = {255,0,0};
 int whiteBlueColor460[3] = {0, 123, 255};
 int nullColor[3] = {0,0,0};
-
 int dataSentFlag = 0;
+
+float B = 1.3*pow(10.0,7);
+float m = -1.4;
+
+volatile uint32_t voltage_value = 0.0;
 
 // Violet 400nm light #8300b5 ---> (131, 0, 181)
 // Red 680nm light ---> (255, 0, 0)
@@ -31,10 +30,10 @@ void readNaturalLight(){
 
 	HAL_ADC_Start_IT(&hadc2);
 
-	voltageValue = get_lights_voltage_value();
+//	volatage_value = get_lights_voltage_value();
 
-	voltageValue = voltageValue*voltageSource/1024;
-	float lightValue = B * pow((voltageSource/voltageValue - 1)  * rRef, m);
+	voltage_value = voltage_value * voltageSource/1024;
+	float lightValue = B * pow((voltageSource/voltage_value - 1)  * rRef, m);
 
 	if (lightValue < LOW_LIGHT_THREESHOLD){
 			naturalLightLevel = Low;

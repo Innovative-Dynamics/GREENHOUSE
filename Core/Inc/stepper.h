@@ -9,7 +9,7 @@
 #define INC_STEPPER_H_
 
 #include "gpio.h"
-#include "utils.h"
+//#include "utils.h"
 #include "string.h"
 #include "adc.h"
 #include "tim.h"
@@ -24,5 +24,8 @@ void stepper_step_angle(float, int, int);
 
 _Bool are_nutrs_deployed ();
 void reset_are_nutrs_deployed ();
+
+// VARIABLES
+extern _Bool nutrs_deployed;
 
 #endif /* INC_STEPPER_H_ */

@@ -14,7 +14,7 @@
 #include "gpio.h"
 #include <stdio.h>
 //#include "adc.h"
-//#include "ultrasonic.h"
+#include "ultrasonic.h"
 #include "stepper.h"
 //#include "dht11.h"
 #include "usart.h"
@@ -46,11 +46,44 @@ typedef enum{WATER_LOAD_PROCEDURE,
 			DATASEND_PROCEDURE,
 			LIGHTS_PROCEDURE,
 			WATER_TANK_CHECK,
+			HOME,
+			INIT,
 			WATER_GROW_TANK_CHECK} machine;
 
 
-//
+// FUNCTIONS
+void virtual_main();
 
-void virtual_main(void);
+// VARIABLES
+extern _Bool enough_water;
+
+extern volatile uint32_t water_level_gt;
+
+extern _Bool ecph_initialization_called;
+extern _Bool ecph_ready;
+
+extern _Bool is_default_check; // TRUE == 1; FALSE == 0
+
+extern _Bool loading;
+extern _Bool unloading;
+
+extern _Bool reading_value;
+extern _Bool is_reading_adc;
+
+//extern _Bool is_counting;
+
+extern _Bool dht11_initialization;
+extern _Bool water_status_initialized;
+
+//extern uint32_t time_prev;
+//extern long long int water_time_prev;
+
+extern float temp;
+extern float humidity;
+
+extern float EC_Value;
+extern float PH_Value;
+
+extern char data[8];
 
 #endif /* INC_VIRTUAL_MAIN_H_ */

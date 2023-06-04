@@ -18,37 +18,33 @@ float RWater = 0;
 float adPH = 0;
 float VdropPH = 0;
 float PH = 0;
-double somma = 0;
-double media = 0;
+//double somma = 0;
+//double media = 0;
 
-_Bool reading_ec = 0;
-int reading_ph = 0;
-
-int ph_read_value = 0;
+//_Bool reading_ec = 0;
+//_Bool reading_ph = 0;
 
 _Bool is_counting_ec = 0;
-_Bool is_reading = 0;
-
 _Bool ec_initialized = 0;
 
-int ec_value_readed = 0;
+//_Bool ec_value_readed = 0;
+//
+//_Bool ph_value_readed = 0;
 
-_Bool ph_value_readed = 0;
-
-
-extern long long int time_prev;
-
-
-_Bool is_ec_initialized ()
-{
-	return ec_initialized;
-}
+//
+//extern long long int time_prev;
 
 
-void reset_ec_initialized ()
-{
-	ec_initialized = 0;
-}
+//_Bool is_ec_initialized ()
+//{
+//	return ec_initialized;
+//}
+//
+//
+//void reset_ec_initialized ()
+//{
+//	ec_initialized = 0;
+//}
 
 
 //_Bool read_ec ()
@@ -63,16 +59,16 @@ void reset_ec_initialized ()
 //}
 
 
-_Bool is_ec_value_readed ()
-{
-	return ec_value_readed;
-}
-
-
-void reset_is_ec_value_readed ()
-{
-	ec_value_readed = 0;
-}
+//_Bool is_ec_value_readed ()
+//{
+//	return ec_value_readed;
+//}
+//
+//
+//void reset_is_ec_value_readed ()
+//{
+//	ec_value_readed = 0;
+//}
 
 
 //_Bool read_ph ()
@@ -87,91 +83,49 @@ void reset_is_ec_value_readed ()
 //}
 
 
-_Bool is_ph_value_readed ()
-{
-	return ph_value_readed;
-}
+//_Bool is_ph_value_readed ()
+//{
+//	return ph_value_readed;
+//}
+//
+//
+//void reset_is_ph_value_readed ()
+//{
+//	ph_value_readed = 0;
+//}
 
 
-void reset_is_ph_value_readed ()
-{
-	ph_value_readed = 0;
-}
+//float get_EC ()
+//{
+//	return EC;
+//}
+//
+//
+//float get_PH ()
+//{
+//	return PH;
+//}
 
-
-float get_EC ()
-{
-	return EC;
-}
-
-
-float get_PH ()
-{
-	return PH;
-}
-
+uint32_t ecph_time_prev;
 
 void ec_init ()
 {
 	if (is_counting_ec == 0)
 	{
-		time_prev = __HAL_TIM_GET_COUNTER(&htim2);
+		ecph_time_prev = __HAL_TIM_GET_COUNTER(&htim2);
 		is_counting_ec = 1;
 		HAL_GPIO_WritePin(EC_WRITE_GPIO_Port, EC_WRITE_Pin, GPIO_PIN_SET); // Imposto il pin ECPower(PC0 -> A5) a livello alto: 3.3v
 	}
 	else
 	{
 
-		if (__HAL_TIM_GET_COUNTER(&htim2) - time_prev >= 6000000)
+		if (__HAL_TIM_GET_COUNTER(&htim2) - ecph_time_prev >= 6000000)
 		{
 			is_counting_ec = 0;
 			ec_initialized = 1;
 		}
 	}
 }
-
-
-//void ec_read (ADC_HandleTypeDef *hadc)
-//{
-//	set_ec_channel();
-//
-////	reading_ec = 1;
-////	reading_ph = 0;
-////
-////	HAL_ADC_Start_IT(hadc);
-//
-//	HAL_ADC_Start(&hadc3);
-//	HAL_ADC_PollForConversion(&hadc3, 100);
-//	adEC = HAL_ADC_GetValue(&hadc3);
-////	HAL_ADC_Stop(&hadc3);
-//
-//	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_RESET);
-//
-//	VdropEC= (Vin * adEC) / 1024; //converto tot bit(adEC) in tensione(VdropEC) (precision_ADC = 2^10 -> = 1024)
-//	RWater = (VdropEC * R1) / (Vin - VdropEC);
-//	EC = 1000 / (RWater * K1); //mS/cm
-//
-//	// GESTIONE DATI EC
-//	if (EC <= 0.9)
-//	{
-//		EC = EC - 0.3;
-//	}
-//	else if (EC > 1.5 && EC <= 1.6)
-//	{
-//		EC = EC + 0.25;
-//	}
-//	else if (EC > 1.6 && EC <= 1.7)
-//	{
-//		EC = EC + 0.35;
-//	}
-//
-//	char data[32];
-//	sprintf(data, "EC: %f \n\r", EC);
-//
-//	HAL_UART_Transmit(&huart2, (uint8_t*)data, strlen(data), HAL_MAX_DELAY);
-//
-//	ec_value_readed = 1;
-//}
 
 void ec_read (ADC_HandleTypeDef* hadc)
 {
@@ -202,11 +156,8 @@ void ec_read (ADC_HandleTypeDef* hadc)
 //	{
 //	    EC = EC + 0.35;
 //	}
-//
-//	HAL_Delay(2000); // attendo che il PA7 si stabilizzi a 0v
-//
-//	return EC;
-	ec_value_readed = 1;
+
+//	ec_value_readed = 1;
 }
 
 void ph_read (ADC_HandleTypeDef* hadc)
@@ -253,7 +204,7 @@ void ph_read (ADC_HandleTypeDef* hadc)
 		PH = 14;
 	}
 
-	ph_value_readed = 1;
+//	ph_value_readed = 1;
 }
 
 void set_ec_channel ()
@@ -293,7 +244,7 @@ void set_ec_channel ()
 
   /** Configure Regular Channel
   */
-  sConfig.Channel = ADC_CHANNEL_2;
+  sConfig.Channel = EC_CHANNEL;
   sConfig.Rank = ADC_REGULAR_RANK_1;
   sConfig.SamplingTime = ADC_SAMPLETIME_2CYCLES_5;
   sConfig.SingleDiff = ADC_SINGLE_ENDED;
@@ -346,7 +297,7 @@ void set_ph_channel()
 
   /** Configure Regular Channel
   */
-  sConfig.Channel = ADC_CHANNEL_3;
+  sConfig.Channel = PH_CHANNEL;
   sConfig.Rank = ADC_REGULAR_RANK_1;
   sConfig.SamplingTime = ADC_SAMPLETIME_2CYCLES_5;
   sConfig.SingleDiff = ADC_SINGLE_ENDED;
