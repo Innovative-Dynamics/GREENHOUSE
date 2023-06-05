@@ -44,7 +44,7 @@ float humidity = 0;
 // WATER UNLOAD PROCEDURE WORKING DONT TOUCH
 // WATER READING SENSOR WORKING DONT TOUCH
 
-machine state;
+machine state = TEST;
 //uint16_t water_tank_level;
 
 // GLOBAL TIMERS
@@ -67,6 +67,8 @@ void virtual_main()
 		__HAL_TIM_SET_COUNTER(&htim2, 0);
 		water_proc_time_prev = __HAL_TIM_GET_COUNTER(&htim2);
 		lights_proc_time_prev = __HAL_TIM_GET_COUNTER(&htim2);
+
+
 		break;
 	case HOME:
 		/*
@@ -77,15 +79,13 @@ void virtual_main()
 		if (counting_to_load && __HAL_TIM_GET_COUNTER(&htim2) - water_proc_time_prev >= 3e+8)
 		{
 			// Check if the pump is submerged
-			read_water_level();
 
-			if (water_level >= MIN_WATER_LVL && water_level <= MAX_WATER_LVL && water_level_readed)
+			if (water_level >= MIN_WATER_LVL && water_level <= MAX_WATER_LVL)
 			{
 				// WATER LOAD PROCEDURE
 				if (is_water_ready)
 				{
 					state = WATER_LOAD_PROCEDURE;
-					water_level_readed = 0;
 				}
 				else
 				{
@@ -130,9 +130,40 @@ void virtual_main()
 		 */
 
 
+
+
 		/*
 		 * SEND DATA
 		 */
+	case TEST:
+
+//		echo_hc();
+		if (!dht11_init)
+		{
+			dht11_start();
+		}
+
+		char data4[32];
+		sprintf(data4, "Water Level: %f \n\r", water_level);
+		HAL_UART_Transmit(&huart2, (uint8_t*)data4, strlen(data4), HAL_MAX_DELAY);
+
+//		if (!ultrasonic_init)
+//		{
+//			read_water_level();
+//			ultrasonic_init = 1;
+//		}
+//		else
+//		{
+//			if (water_level_readed)
+//			{
+//				char data4[32];
+//				sprintf(data4, "Water Level: %i \n\r", water_level);
+//				HAL_UART_Transmit(&huart2, (uint8_t*)data4, strlen(data4), HAL_MAX_DELAY);
+//				ultrasonic_init = 0;
+//				water_level_readed = 0;
+//			}
+//		}
+		break;
 
 	case WATER_LOAD_PROCEDURE:
 
@@ -144,6 +175,7 @@ void virtual_main()
 //			else
 //			{
 				HAL_ADC_Start_IT(&hadc1);
+
 //				if (!is_reading_adc)
 //				{
 //					HAL_ADC_Start_IT(&hadc1);
@@ -172,7 +204,7 @@ void virtual_main()
 					water_proc_time_prev = __HAL_TIM_GET_COUNTER(&htim2);
 //					loading = 0;
 
-					state = WATER_STATUS_CHECK;
+					state = HOME;
 				}
 				else
 				{
@@ -191,6 +223,10 @@ void virtual_main()
 //			else
 //			{
 				HAL_ADC_Start_IT(&hadc1);
+
+				char data2[32];
+				sprintf(data2, "Water Level GT: %lui \n\r", water_level_gt);
+				HAL_UART_Transmit(&huart2, (uint8_t*)data2, strlen(data2), HAL_MAX_DELAY);
 
 //				if (!is_reading_adc)
 //				{

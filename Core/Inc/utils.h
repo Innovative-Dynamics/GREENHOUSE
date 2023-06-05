@@ -13,6 +13,7 @@
 #include "adc.h"
 #include "tim.h"
 //#include "ecph.h"
+#include "ultrasonic.h"
 #include "lights.h"
 #include "virtual_main.h"
 

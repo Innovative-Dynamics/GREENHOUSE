@@ -27,6 +27,8 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "virtual_main.h"
+#include "dht11.h"
+#include "ultrasonic.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -100,8 +102,13 @@ int main(void)
   MX_ADC3_Init();
   MX_TIM2_Init();
   MX_ADC1_Init();
+  MX_TIM8_Init();
   /* USER CODE BEGIN 2 */
   HAL_TIM_Base_Start(&htim2);
+  HAL_TIM_PWM_Start_IT(&htim8, TIM_CHANNEL_1);
+  setup_pwm();
+  dht11_start();
+
   /* USER CODE END 2 */
 
   /* Infinite loop */

@@ -1,7 +1,2 @@
-../Core/Src/ultrasonic.c:81:6:trigger_measurement	8	static
-../Core/Src/ultrasonic.c:86:6:reset_trigger	8	static
-../Core/Src/ultrasonic.c:91:6:start_counting	4	static
-../Core/Src/ultrasonic.c:97:7:check_counting_elapsed	16	static
-../Core/Src/ultrasonic.c:102:6:read_value1	4	static
-../Core/Src/ultrasonic.c:109:6:read_value2	4	static
-../Core/Src/ultrasonic.c:116:6:read_water_level	8	static
+../Core/Src/ultrasonic.c:18:6:setup_pwm	40	static
+../Core/Src/ultrasonic.c:34:6:echo_callback	8	static

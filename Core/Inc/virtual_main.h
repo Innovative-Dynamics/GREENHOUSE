@@ -48,6 +48,7 @@ typedef enum{WATER_LOAD_PROCEDURE,
 			WATER_TANK_CHECK,
 			HOME,
 			INIT,
+			TEST,
 			WATER_GROW_TANK_CHECK} machine;
 
 

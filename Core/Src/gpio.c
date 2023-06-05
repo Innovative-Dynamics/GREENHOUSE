@@ -55,8 +55,7 @@ void MX_GPIO_Init(void)
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, STEP_IN1_Pin|MIX_PUMP_Pin|STEP_IN4_Pin|STEP_IN3_Pin
-                          |STEP_IN2_Pin|ULTRAS__TRIG_Pin|ULTRAS__ECHO_Pin|ELECTROVALVE_Pin
-                          |WATER_PUMP_Pin, GPIO_PIN_RESET);
+                          |STEP_IN2_Pin|ELECTROVALVE_Pin|WATER_PUMP_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin : PtPin */
   GPIO_InitStruct.Pin = B1_Pin;
@@ -72,15 +71,32 @@ void MX_GPIO_Init(void)
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
   /*Configure GPIO pins : PBPin PBPin PBPin PBPin
-                           PBPin PBPin PBPin PBPin
-                           PBPin */
+                           PBPin PBPin PBPin */
   GPIO_InitStruct.Pin = STEP_IN1_Pin|MIX_PUMP_Pin|STEP_IN4_Pin|STEP_IN3_Pin
-                          |STEP_IN2_Pin|ULTRAS__TRIG_Pin|ULTRAS__ECHO_Pin|ELECTROVALVE_Pin
-                          |WATER_PUMP_Pin;
+                          |STEP_IN2_Pin|ELECTROVALVE_Pin|WATER_PUMP_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : PtPin */
+  GPIO_InitStruct.Pin = ECHO_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING_FALLING;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(ECHO_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : PtPin */
+  GPIO_InitStruct.Pin = DHT11_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(DHT11_GPIO_Port, &GPIO_InitStruct);
+
+  /* EXTI interrupt init*/
+  HAL_NVIC_SetPriority(EXTI9_5_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
+
+  HAL_NVIC_SetPriority(EXTI15_10_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
 
 }
 

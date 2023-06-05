@@ -15,16 +15,10 @@
 #include "virtual_main.h"
 
 // FUNCTIONS
-void trigger_measurement();
-void reset_trigger();
-void start_counting();
-_Bool check_counting_elapsed(uint32_t);
-void read_value1();
-void read_value2();
-void read_water_level ();
+void echo_callback(void);
+void setup_pwm(void);
 
 // VARIABLES
-extern uint16_t water_level;
-extern _Bool water_level_readed;
+extern float water_level;
 
 #endif /* INC_ULTRASONIC_H_ */

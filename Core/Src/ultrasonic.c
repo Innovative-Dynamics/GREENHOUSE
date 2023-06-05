@@ -6,155 +6,43 @@
  */
 
 #include "ultrasonic.h"
+#include "stdbool.h"
 
-//uint32_t pMillis;
-uint32_t Value1 = 0;
-uint32_t Value2 = 0;
-uint16_t Distance  = 0;
-uint16_t water_level = 0;
+uint32_t hc_counter = 0;		//counter timer fro hc_04 distance computaion
+float distance_hc = 0;						//distance measured
+_Bool pwm_state = 0;					//variable to measured pwm state
+_Bool prev_pwm_state = 0;				//variable to measured previous pwm state
+_Bool echo_state = 0;					//variable to store echo state
+float water_level = 0;
 
-_Bool trig_ready = 0;
-_Bool value1_read = 0;
-_Bool value2_read = 0;
-_Bool water_level_readed = 0;
-
-uint32_t ultrasonic_time_prev;
-_Bool ecph_is_counting = 0;
-
-//uint16_t read_water_level ()
-//{
-//	// Read the water level first to avoid empty runs of the pump
-//	if (!trig_ready)
-//	{
-//		HAL_GPIO_WritePin(ULTRAS__TRIG_GPIO_Port, ULTRAS__TRIG_Pin, GPIO_PIN_SET);  // pull the TRIG pin HIGH
-//
-//		if (!is_counting)
-//		{
-//			time_prev = __HAL_TIM_GET_COUNTER(&htim2);
-//			is_counting = 1;
-//		}
-//		else if (__HAL_TIM_GET_COUNTER(&htim2) - time_prev >= 10)
-//		{
-//			HAL_GPIO_WritePin(ULTRAS__TRIG_GPIO_Port, ULTRAS__TRIG_Pin, GPIO_PIN_RESET);  // pull the TRIG pin low
-//			is_counting = 0;
-//			trig_ready = 1;
-//		}
-//	}
-//	else if (!value1_read)
-//	{
-//		if (!is_counting)
-//		{
-//			time_prev = __HAL_TIM_GET_COUNTER(&htim2);
-//			is_counting = 1;
-//		}
-//		else if (!(HAL_GPIO_ReadPin(ULTRAS__ECHO_GPIO_Port, ULTRAS__ECHO_Pin)) && (__HAL_TIM_GET_COUNTER(&htim2) - time_prev >= 10))
-//		{
-//			Value1 = __HAL_TIM_GET_COUNTER (&htim2);
-//			is_counting = 0;
-//			value1_read = 1;
-//		}
-//	}
-//	else if (!value2_read)
-//	{
-//		if (!is_counting)
-//		{
-//			time_prev = __HAL_TIM_GET_COUNTER(&htim2);
-//			is_counting = 1;
-//		}
-//		else if ((HAL_GPIO_ReadPin(ULTRAS__ECHO_GPIO_Port, ULTRAS__ECHO_Pin)) && (__HAL_TIM_GET_COUNTER(&htim2) - time_prev >= 50))
-//		{
-//			Value2 = __HAL_TIM_GET_COUNTER (&htim2);
-//			is_counting = 0;
-//			value1_read = 1;
-//		}
-//	}
-//	else
-//	{
-//		Distance = (Value2 - Value1) * 0.034/2;
-//
-//		water_level = 25 - Distance;
-//
-//		return water_level;
-//	}
-//}
-
-void trigger_measurement()
+void setup_pwm(void)
 {
-    HAL_GPIO_WritePin(ULTRAS__TRIG_GPIO_Port, ULTRAS__TRIG_Pin, GPIO_PIN_SET);
+	//Setup config variable
+	TIM_OC_InitTypeDef my_sConfigOC = {0};
+	my_sConfigOC.OCMode = TIM_OCMODE_PWM1;
+	my_sConfigOC.Pulse = 1;
+	my_sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
+	my_sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
+
+	//Start PWM
+	HAL_TIM_PWM_Stop(&htim8, TIM_CHANNEL_1);
+	if (HAL_TIM_PWM_ConfigChannel(&htim8, &my_sConfigOC, TIM_CHANNEL_1) != HAL_OK){Error_Handler();}
+	HAL_TIM_PWM_Start_IT(&htim8, TIM_CHANNEL_1);
 }
 
-void reset_trigger()
+//this function is called when a rising/falling event of the interrupt occurs
+void echo_callback (void)
 {
-    HAL_GPIO_WritePin(ULTRAS__TRIG_GPIO_Port, ULTRAS__TRIG_Pin, GPIO_PIN_RESET);
-}
-
-void start_counting()
-{
-	ultrasonic_time_prev = __HAL_TIM_GET_COUNTER(&htim2);
-	ecph_is_counting = 1;
-}
-
-_Bool check_counting_elapsed(uint32_t elapsed_time)
-{
-    return (__HAL_TIM_GET_COUNTER(&htim2) - ultrasonic_time_prev >= elapsed_time);
-}
-
-void read_value1()
-{
-    Value1 = __HAL_TIM_GET_COUNTER(&htim2);
-    ecph_is_counting = 0;
-    value1_read = 1;
-}
-
-void read_value2()
-{
-    Value2 = __HAL_TIM_GET_COUNTER(&htim2);
-    ecph_is_counting = 0;
-    value2_read = 1;
-}
-
-void read_water_level()
-{
-    if (!trig_ready)
-    {
-        trigger_measurement();
-        if (!ecph_is_counting)
-        {
-            start_counting();
-        }
-        else if (check_counting_elapsed(10))
-        {
-            reset_trigger();
-            ecph_is_counting = 0;
-            trig_ready = 1;
-        }
-    }
-    else if (!value1_read)
-    {
-        if (!ecph_is_counting)
-        {
-            start_counting();
-        }
-        else if (!HAL_GPIO_ReadPin(ULTRAS__ECHO_GPIO_Port, ULTRAS__ECHO_Pin) && check_counting_elapsed(10))
-        {
-            read_value1();
-        }
-    }
-    else if (!value2_read)
-    {
-        if (!ecph_is_counting)
-        {
-            start_counting();
-        }
-        else if (HAL_GPIO_ReadPin(ULTRAS__ECHO_GPIO_Port, ULTRAS__ECHO_Pin) && check_counting_elapsed(50))
-        {
-            read_value2();
-        }
-    }
-    else
-    {
-        Distance = (Value2 - Value1) * 0.034 / 2;
-        water_level = 25 - Distance;
-        water_level_readed = 1;
-    }
+	//Read the state of the GPIO
+	echo_state = HAL_GPIO_ReadPin(ECHO_GPIO_Port, ECHO_Pin);
+	//If the state is HIGH, start counting, else stop
+	if(echo_state)
+	{
+		hc_counter = __HAL_TIM_GET_COUNTER(&htim2);
+	}
+	else if (!echo_state)
+	{
+		//Convert distance into
+		water_level = (float)(__HAL_TIM_GET_COUNTER(&htim2) - hc_counter)*0.034/2;;
+	}
 }

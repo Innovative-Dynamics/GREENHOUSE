@@ -1,1 +1,2 @@
-../Core/Src/utils.c:58:6:HAL_ADC_ConvCpltCallback	16	static
+../Core/Src/utils.c:57:6:HAL_GPIO_EXTI_Callback	16	static
+../Core/Src/utils.c:69:6:HAL_ADC_ConvCpltCallback	16	static

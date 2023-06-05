@@ -59,6 +59,7 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define B1_Pin GPIO_PIN_13
 #define B1_GPIO_Port GPIOC
+#define B1_EXTI_IRQn EXTI15_10_IRQn
 #define WATER_LEVEL_Pin GPIO_PIN_0
 #define WATER_LEVEL_GPIO_Port GPIOC
 #define EC_READ_Pin GPIO_PIN_1
@@ -85,6 +86,11 @@ void Error_Handler(void);
 #define STEP_IN3_GPIO_Port GPIOB
 #define STEP_IN2_Pin GPIO_PIN_15
 #define STEP_IN2_GPIO_Port GPIOB
+#define TRIG_Pin GPIO_PIN_6
+#define TRIG_GPIO_Port GPIOC
+#define ECHO_Pin GPIO_PIN_7
+#define ECHO_GPIO_Port GPIOC
+#define ECHO_EXTI_IRQn EXTI9_5_IRQn
 #define LIGHTS_PWM_Pin GPIO_PIN_8
 #define LIGHTS_PWM_GPIO_Port GPIOA
 #define TMS_Pin GPIO_PIN_13
@@ -93,10 +99,9 @@ void Error_Handler(void);
 #define TCK_GPIO_Port GPIOA
 #define SWO_Pin GPIO_PIN_3
 #define SWO_GPIO_Port GPIOB
-#define ULTRAS__TRIG_Pin GPIO_PIN_4
-#define ULTRAS__TRIG_GPIO_Port GPIOB
-#define ULTRAS__ECHO_Pin GPIO_PIN_5
-#define ULTRAS__ECHO_GPIO_Port GPIOB
+#define DHT11_Pin GPIO_PIN_5
+#define DHT11_GPIO_Port GPIOB
+#define DHT11_EXTI_IRQn EXTI9_5_IRQn
 #define ELECTROVALVE_Pin GPIO_PIN_6
 #define ELECTROVALVE_GPIO_Port GPIOB
 #define WATER_PUMP_Pin GPIO_PIN_7
