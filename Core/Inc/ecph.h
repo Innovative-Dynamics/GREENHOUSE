@@ -51,7 +51,7 @@ void set_ph_channel ();
 extern float EC;
 
 // PH METER VARS.
-extern float PH;
+extern uint8_t PH;
 //double somma = 0;
 //double media = 0;
 

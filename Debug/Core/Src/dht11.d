@@ -31,7 +31,10 @@ Core/Src/dht11.o: ../Core/Src/dht11.c ../Core/Inc/dht11.h \
  /home/envy0/STM32Cube/Repository/STM32Cube_FW_L4_V1.17.2/Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_tim_ex.h \
  /home/envy0/STM32Cube/Repository/STM32Cube_FW_L4_V1.17.2/Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_uart.h \
  /home/envy0/STM32Cube/Repository/STM32Cube_FW_L4_V1.17.2/Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_uart_ex.h \
- ../Core/Inc/tim.h
+ ../Core/Inc/tim.h ../Core/Inc/utils.h ../Core/Inc/adc.h \
+ ../Core/Inc/ultrasonic.h ../Core/Inc/virtual_main.h \
+ ../Core/Inc/stepper.h ../Core/Inc/usart.h ../Core/Inc/lights.h \
+ ../Core/Inc/dma.h ../Core/Inc/ecph.h ../Core/Inc/dht11.h
 ../Core/Inc/dht11.h:
 ../Core/Inc/gpio.h:
 ../Core/Inc/main.h:
@@ -67,3 +70,13 @@ Core/Src/dht11.o: ../Core/Src/dht11.c ../Core/Inc/dht11.h \
 /home/envy0/STM32Cube/Repository/STM32Cube_FW_L4_V1.17.2/Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_uart.h:
 /home/envy0/STM32Cube/Repository/STM32Cube_FW_L4_V1.17.2/Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_uart_ex.h:
 ../Core/Inc/tim.h:
+../Core/Inc/utils.h:
+../Core/Inc/adc.h:
+../Core/Inc/ultrasonic.h:
+../Core/Inc/virtual_main.h:
+../Core/Inc/stepper.h:
+../Core/Inc/usart.h:
+../Core/Inc/lights.h:
+../Core/Inc/dma.h:
+../Core/Inc/ecph.h:
+../Core/Inc/dht11.h:

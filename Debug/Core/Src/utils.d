@@ -34,7 +34,7 @@ Core/Src/utils.o: ../Core/Src/utils.c ../Core/Inc/utils.h \
  ../Core/Inc/adc.h ../Core/Inc/tim.h ../Core/Inc/ultrasonic.h \
  ../Core/Inc/virtual_main.h ../Core/Inc/utils.h ../Core/Inc/stepper.h \
  ../Core/Inc/usart.h ../Core/Inc/lights.h ../Core/Inc/dma.h \
- ../Core/Inc/ecph.h
+ ../Core/Inc/ecph.h ../Core/Inc/dht11.h
 ../Core/Inc/utils.h:
 ../Core/Inc/gpio.h:
 ../Core/Inc/main.h:
@@ -79,3 +79,4 @@ Core/Src/utils.o: ../Core/Src/utils.c ../Core/Inc/utils.h \
 ../Core/Inc/lights.h:
 ../Core/Inc/dma.h:
 ../Core/Inc/ecph.h:
+../Core/Inc/dht11.h:

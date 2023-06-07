@@ -19,15 +19,9 @@ _Bool nutrs_deployed = 0;
 //	nutrs_deployed = 0;
 //}
 
-void delay(int us)
-{
-	__HAL_TIM_SET_COUNTER(&htim2, 0);
-	while (__HAL_TIM_GET_COUNTER(&htim2) < us);
-}
-
 void stepper_set_rpm(int rpm)  // Set rpm--> max 13, min 1,,,  went to 14 rev/min
 {
-	delay(60000000 / stepsperrev / rpm);
+	delay_us(60000000 / stepsperrev / rpm);
 }
 
 void stepper_half_drive(int step)

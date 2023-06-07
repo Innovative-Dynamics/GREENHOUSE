@@ -1,1 +1,2 @@
-dht11.c:13:6:dht11_start	3
+dht11.c:16:9:DHT11_Read	7
+dht11.c:42:9:DHT11_Start	5

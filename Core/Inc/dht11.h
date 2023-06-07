@@ -11,8 +11,11 @@
 #include "gpio.h"
 #include "stdio.h"
 #include "tim.h"
+#include "utils.h"
 
-void dht11_start();
+uint8_t DHT11_Start (void);
+//_Bool DHT11_Check_Response ();
+uint8_t DHT11_Read (void);
 
 extern _Bool dht11_init;
 

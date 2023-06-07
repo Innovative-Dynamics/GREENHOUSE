@@ -1,4 +1,4 @@
 main.c:71:5:main	1
-main.c:130:6:SystemClock_Config	4
-main.c:179:6:PeriphCommonClock_Config	2
-main.c:208:6:Error_Handler	1
+main.c:152:6:SystemClock_Config	4
+main.c:201:6:PeriphCommonClock_Config	2
+main.c:230:6:Error_Handler	1

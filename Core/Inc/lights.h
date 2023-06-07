@@ -34,6 +34,6 @@ extern int dataSentFlag;
 
 extern float B;
 extern float m;
-extern volatile uint32_t voltage_value;
+extern float voltage_value;
 
 #endif // INC_LIGHTLOWLEVELPRCEDURE_H_

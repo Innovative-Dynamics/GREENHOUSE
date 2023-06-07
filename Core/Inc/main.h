@@ -76,14 +76,10 @@ void Error_Handler(void);
 #define EC_WRITE_GPIO_Port GPIOA
 #define PHOTORESISTOR_Pin GPIO_PIN_0
 #define PHOTORESISTOR_GPIO_Port GPIOB
-#define STEP_IN1_Pin GPIO_PIN_1
-#define STEP_IN1_GPIO_Port GPIOB
 #define MIX_PUMP_Pin GPIO_PIN_2
 #define MIX_PUMP_GPIO_Port GPIOB
 #define STEP_IN4_Pin GPIO_PIN_13
 #define STEP_IN4_GPIO_Port GPIOB
-#define STEP_IN3_Pin GPIO_PIN_14
-#define STEP_IN3_GPIO_Port GPIOB
 #define STEP_IN2_Pin GPIO_PIN_15
 #define STEP_IN2_GPIO_Port GPIOB
 #define TRIG_Pin GPIO_PIN_6
@@ -93,19 +89,22 @@ void Error_Handler(void);
 #define ECHO_EXTI_IRQn EXTI9_5_IRQn
 #define LIGHTS_PWM_Pin GPIO_PIN_8
 #define LIGHTS_PWM_GPIO_Port GPIOA
+#define STEP_IN3_Pin GPIO_PIN_12
+#define STEP_IN3_GPIO_Port GPIOA
 #define TMS_Pin GPIO_PIN_13
 #define TMS_GPIO_Port GPIOA
 #define TCK_Pin GPIO_PIN_14
 #define TCK_GPIO_Port GPIOA
+#define STEP_IN1_Pin GPIO_PIN_2
+#define STEP_IN1_GPIO_Port GPIOD
 #define SWO_Pin GPIO_PIN_3
 #define SWO_GPIO_Port GPIOB
-#define DHT11_Pin GPIO_PIN_5
+#define UNLOAD_WATER_PUMP_Pin GPIO_PIN_6
+#define UNLOAD_WATER_PUMP_GPIO_Port GPIOB
+#define LOAD_WATER_PUMP_Pin GPIO_PIN_7
+#define LOAD_WATER_PUMP_GPIO_Port GPIOB
+#define DHT11_Pin GPIO_PIN_9
 #define DHT11_GPIO_Port GPIOB
-#define DHT11_EXTI_IRQn EXTI9_5_IRQn
-#define ELECTROVALVE_Pin GPIO_PIN_6
-#define ELECTROVALVE_GPIO_Port GPIOB
-#define WATER_PUMP_Pin GPIO_PIN_7
-#define WATER_PUMP_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 

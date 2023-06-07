@@ -103,11 +103,13 @@ int main(void)
   MX_TIM2_Init();
   MX_ADC1_Init();
   MX_TIM8_Init();
+  MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
   HAL_TIM_Base_Start(&htim2);
   HAL_TIM_PWM_Start_IT(&htim8, TIM_CHANNEL_1);
   setup_pwm();
-  dht11_start();
+//  int counter = 0;
+//  GPIO_PinState pin_state;
 
   /* USER CODE END 2 */
 
@@ -116,6 +118,26 @@ int main(void)
   while (1)
   {
 	  virtual_main();
+
+//	  pin_state = HAL_GPIO_ReadPin(B1_GPIO_Port, B1_Pin);
+//
+//	  if (pin_state == 0)
+//	  {
+//		  HAL_GPIO_WritePin(ELECTROVALVE_GPIO_Port, ELECTROVALVE_Pin, GPIO_PIN_SET);
+//	  }
+//	  else
+//	  {
+//		  HAL_GPIO_WritePin(ELECTROVALVE_GPIO_Port, ELECTROVALVE_Pin, GPIO_PIN_RESET);
+//	  }
+//
+//		char dataecph[32];
+//		sprintf(dataecph, "Pin state: %i \n\r", pin_state);
+//		HAL_UART_Transmit(&huart2, (uint8_t*)dataecph, strlen(dataecph), HAL_MAX_DELAY);
+
+//	  counter++;
+//		char data4[32];
+//		sprintf(data4, "%i \n\r", counter);
+//		HAL_UART_Transmit(&huart2, (uint8_t*)data4, strlen(data4), HAL_MAX_DELAY);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

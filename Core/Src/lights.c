@@ -17,7 +17,7 @@ int dataSentFlag = 0;
 float B = 1.3*pow(10.0,7);
 float m = -1.4;
 
-volatile uint32_t voltage_value = 0.0;
+float voltage_value = 0.0;
 
 // Violet 400nm light #8300b5 ---> (131, 0, 181)
 // Red 680nm light ---> (255, 0, 0)

@@ -22,15 +22,16 @@
 #include <string.h>
 #include "lights.h"
 #include "ecph.h"
+#include "dht11.h"
 
 
 // DEFINES
 // Water Level Defines
 #define MIN_WATER_LVL 8 // Double of the height of the pump so it remains always submerged
-#define MAX_WATER_LVL 18
+#define MAX_WATER_LVL 25
 
 // ECPH Defines
-#define EC_SETPOINT 1
+#define EC_SETPOINT 1.3
 
 // WATER GROW TANK LEVEL
 #define ROOT_LEVEL 124
@@ -58,7 +59,7 @@ void virtual_main();
 // VARIABLES
 extern _Bool enough_water;
 
-extern volatile uint32_t water_level_gt;
+extern uint32_t water_level_gt;
 
 extern _Bool ecph_initialization_called;
 extern _Bool ecph_ready;

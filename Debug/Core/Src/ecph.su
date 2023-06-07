@@ -1,5 +1,5 @@
 ../Core/Src/ecph.c:111:6:ec_init	8	static
 ../Core/Src/ecph.c:130:6:ec_read	24	static
-../Core/Src/ecph.c:163:6:ph_read	16	static
-../Core/Src/ecph.c:210:6:set_ec_channel	32	static
-../Core/Src/ecph.c:263:6:set_ph_channel	32	static
+../Core/Src/ecph.c:165:6:ph_read	16	static
+../Core/Src/ecph.c:212:6:set_ec_channel	32	static
+../Core/Src/ecph.c:265:6:set_ph_channel	32	static

@@ -24,5 +24,6 @@
 //_Bool lights_reading_done ();
 //void reset_lights_reading_done ();
 //float get_lights_voltage_value ();
+void delay_us (uint32_t);
 
 #endif /* INC_UTILS_H_ */

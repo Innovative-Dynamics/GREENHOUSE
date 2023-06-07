@@ -17,7 +17,7 @@ float RWater = 0;
 // PH METER VARS.
 float adPH = 0;
 float VdropPH = 0;
-float PH = 0;
+uint8_t PH = 0;
 //double somma = 0;
 //double media = 0;
 
@@ -141,23 +141,25 @@ void ec_read (ADC_HandleTypeDef* hadc)
 
 	VdropEC= (Vin *adEC) / 1024.0; //converto tot bit(adEC) in tensione(VdropEC) (precision_ADC = 2^10 -> = 1024)
 	RWater = (VdropEC*R1) / (Vin-VdropEC); // prova ad aumentare la precisione a 2^12
-	EC = 1000/ (RWater*K1); //mS/cm
+	EC = 1000 / (RWater*K1); //mS/cm
 
     // GESTIONE DATI EC
-//	if (EC <= 0.9)
-//	{
-//	    EC = EC - 0.3;
-//	}
-//	else if (EC > 1.5 && EC <= 1.6)
-//	{
-//	    EC = EC + 0.25;
-//	}
-//	else if (EC > 1.6 && EC <= 1.7)
-//	{
-//	    EC = EC + 0.35;
-//	}
-
-//	ec_value_readed = 1;
+	if (EC <= 0.3)
+	{
+		EC = 0;
+	}
+	else if (EC >= 0.3 && EC <= 0.9)
+	{
+		EC = EC - 0.2;
+	}
+	else if (EC > 1.5 && EC <= 1.6)
+	{
+	    EC = EC + 0.25;
+	}
+	else if (EC > 1.6 && EC <= 1.7)
+	{
+	    EC = EC + 0.35;
+	}
 }
 
 void ph_read (ADC_HandleTypeDef* hadc)

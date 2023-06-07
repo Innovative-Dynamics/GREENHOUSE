@@ -9,7 +9,7 @@
 #define INC_STEPPER_H_
 
 #include "gpio.h"
-//#include "utils.h"
+#include "utils.h"
 #include "string.h"
 #include "adc.h"
 #include "tim.h"
