@@ -1,6 +1,0 @@
-../Core/Src/lights.c:27:6:readNaturalLight	40	static
-../Core/Src/lights.c:54:6:setLed	16	static
-../Core/Src/lights.c:67:6:setBrightness	40	static
-../Core/Src/lights.c:91:6:ws2812SendData	32	static
-../Core/Src/lights.c:133:6:HAL_TIM_PWM_PulseFinishedCallback	16	static
-../Core/Src/lights.c:140:6:setLight	24	static

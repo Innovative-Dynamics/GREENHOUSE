@@ -1,3 +1,0 @@
-../Core/Src/utils.c:10:6:delay_us	24	static
-../Core/Src/utils.c:16:6:HAL_GPIO_EXTI_Callback	16	static
-../Core/Src/utils.c:24:6:HAL_ADC_ConvCpltCallback	16	static

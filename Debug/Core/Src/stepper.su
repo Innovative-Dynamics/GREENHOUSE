@@ -1,3 +1,0 @@
-../Core/Src/stepper.c:10:6:stepper_set_rpm	16	static
-../Core/Src/stepper.c:15:6:stepper_half_drive	16	static
-../Core/Src/stepper.c:76:6:stepper_step_angle	40	static

@@ -1,2 +1,0 @@
-../Core/Src/dht11.c:16:9:DHT11_Read	16	static
-../Core/Src/dht11.c:42:9:DHT11_Start	32	static

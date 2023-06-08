@@ -1,6 +1,0 @@
-lights.c:27:6:readNaturalLight	3
-lights.c:54:6:setLed	1
-lights.c:67:6:setBrightness	4
-lights.c:91:6:ws2812SendData	6
-lights.c:133:6:HAL_TIM_PWM_PulseFinishedCallback	1
-lights.c:140:6:setLight	18

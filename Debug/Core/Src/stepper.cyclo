@@ -1,3 +1,0 @@
-stepper.c:10:6:stepper_set_rpm	1
-stepper.c:15:6:stepper_half_drive	9
-stepper.c:76:6:stepper_step_angle	6

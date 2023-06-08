@@ -1,5 +1,0 @@
-ecph.c:27:6:ec_init	3
-ecph.c:46:6:ec_read	8
-ecph.c:81:6:ph_read	28
-ecph.c:126:6:set_ec_channel	3
-ecph.c:179:6:set_ph_channel	3

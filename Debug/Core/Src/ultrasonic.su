@@ -1,2 +1,0 @@
-../Core/Src/ultrasonic.c:17:6:setup_pwm	40	static
-../Core/Src/ultrasonic.c:33:6:echo_callback	8	static
