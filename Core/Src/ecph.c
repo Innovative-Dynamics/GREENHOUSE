@@ -17,7 +17,7 @@ float RWater = 0;
 // PH METER VARS.
 float adPH = 0;
 float VdropPH = 0;
-uint8_t PH = 0;
+float PH = 0;
 
 _Bool is_counting_ec = 0;
 _Bool ec_initialized = 0;
@@ -59,23 +59,27 @@ void ec_read (ADC_HandleTypeDef* hadc)
 	RWater = (VdropEC*R1) / (Vin-VdropEC); // prova ad aumentare la precisione a 2^12
 	EC = 1000 / (RWater*K1); //mS/cm
 
-    // GESTIONE DATI EC
-	if (EC <= 0.3)
-	{
-		EC = 0;
-	}
-	else if (EC >= 0.3 && EC <= 0.9)
-	{
-		EC = EC - 0.2;
-	}
-	else if (EC > 1.5 && EC <= 1.6)
-	{
-	    EC = EC + 0.25;
-	}
-	else if (EC > 1.6 && EC <= 1.7)
-	{
-	    EC = EC + 0.35;
-	}
+//	char data4[32];
+//	sprintf(data4, "EC Pre Gestione: %f \n\r", EC);
+//	HAL_UART_Transmit(&huart2, (uint8_t*)data4, strlen(data4), HAL_MAX_DELAY);
+//
+//    // GESTIONE DATI EC
+//	if (EC <= 0.3)
+//	{
+//		EC = 0;
+//	}
+//	else if (EC >= 0.3 && EC <= 0.9)
+//	{
+//		EC = EC - 0.2;
+//	}
+//	else if (EC > 1.5 && EC <= 1.6)
+//	{
+//	    EC = EC + 0.25;
+//	}
+//	else if (EC > 1.6 && EC <= 1.7)
+//	{
+//	    EC = EC + 0.35;
+//	}
 }
 
 void ph_read (ADC_HandleTypeDef* hadc)
@@ -119,6 +123,10 @@ void ph_read (ADC_HandleTypeDef* hadc)
 		PH = 9.5;
 	else
 		PH = 10.0;
+
+//	char data1[32];
+//	sprintf(data1, "PH: %u \n\r", PH);
+//	HAL_UART_Transmit(&huart2, (uint8_t*)data1, strlen(data1), HAL_MAX_DELAY);
 
 
 }

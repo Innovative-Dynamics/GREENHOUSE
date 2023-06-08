@@ -18,7 +18,7 @@
 #include "utils.h"
 
 // DEFINES
-#define K1 1 //Coeff. calibrazione sonda EC
+#define K1 0.8 //Coeff. calibrazione sonda EC
 #define R1 500 // Valore resistenza sonda EC
 #define Vin 3.3
 #define ph_interval 0.2357 // prima era 0.35 N.B il pin legge max 3.3v non 5v
@@ -51,7 +51,7 @@ void set_ph_channel ();
 extern float EC;
 
 // PH METER VARS.
-extern uint8_t PH;
+extern float PH;
 //double somma = 0;
 //double media = 0;
 
