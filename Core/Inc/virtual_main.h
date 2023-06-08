@@ -31,10 +31,14 @@
 #define MAX_WATER_LVL 25
 
 // ECPH Defines
+#define EC_LOWER_BOUND 1
+#define EC_UPPER_BOUND 1.5
 #define EC_SETPOINT 1.3
+#define PH_SETPOINT 5.5
 
 // WATER GROW TANK LEVEL
-#define ROOT_LEVEL 124
+#define ROOT_LEVEL 195
+#define MIN_GT_WATER_LEVEL 100
 
 
 // STATE MACHINE
@@ -57,35 +61,9 @@ typedef enum{WATER_LOAD_PROCEDURE,
 void virtual_main();
 
 // VARIABLES
-extern _Bool enough_water;
-
+extern float water_level;
 extern uint32_t water_level_gt;
 
-extern _Bool ecph_initialization_called;
-extern _Bool ecph_ready;
-
-extern _Bool is_default_check; // TRUE == 1; FALSE == 0
-
-extern _Bool loading;
-extern _Bool unloading;
-
-extern _Bool reading_value;
-extern _Bool is_reading_adc;
-
-//extern _Bool is_counting;
-
-extern _Bool dht11_initialization;
-extern _Bool water_status_initialized;
-
-//extern uint32_t time_prev;
-//extern long long int water_time_prev;
-
-extern float temp;
-extern float humidity;
-
-extern float EC_Value;
-extern float PH_Value;
-
-extern char data[8];
+extern _Bool nutrs_deployed;
 
 #endif /* INC_VIRTUAL_MAIN_H_ */

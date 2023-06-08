@@ -18,7 +18,4 @@
 void echo_callback(void);
 void setup_pwm(void);
 
-// VARIABLES
-extern float water_level;
-
 #endif /* INC_ULTRASONIC_H_ */

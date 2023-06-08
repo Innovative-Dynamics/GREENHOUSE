@@ -7,18 +7,6 @@
 
 #include "stepper.h"
 
-_Bool nutrs_deployed = 0;
-
-//_Bool are_nutrs_deployed ()
-//{
-//	return nutrs_deployed;
-//}
-//
-//void reset_are_nutrs_deployed ()
-//{
-//	nutrs_deployed = 0;
-//}
-
 void stepper_set_rpm(int rpm)  // Set rpm--> max 13, min 1,,,  went to 14 rev/min
 {
 	delay_us(60000000 / stepsperrev / rpm);
@@ -85,8 +73,13 @@ void stepper_half_drive(int step)
 	}
 }
 
-void stepper_step_angle(float angle, int direction, int rpm)
+void stepper_step_angle(int direction, int rpm)
 {
+
+	float deltaEC = EC - EC_SETPOINT;
+
+	float angle = 720 * deltaEC;
+
 	int numberofsequences = (int)(angle / anglepersequence);
 
 	for (int seq = 0; seq < numberofsequences; seq++)

@@ -7,54 +7,26 @@
 
 #include "virtual_main.h"
 
-_Bool enough_water = 0;
-_Bool is_water_ready = 0;
+_Bool is_water_ready = 0; // To check for nutrients
 
-//_Bool ecph_initialization_called = 0;
-//_Bool ecph_ready = 0;
+float water_level = 0;
+uint32_t water_level_gt = 0;
 
-uint32_t water_level_gt = ROOT_LEVEL;
-
-_Bool is_default_check = 1; // TRUE == 1; FALSE == 0
-
-_Bool loading = 0;
-_Bool unloading = 0;
-
-//_Bool reading_value = 0;
-//_Bool is_reading_adc = 0;
-
-//_Bool is_counting = 0;
-
-_Bool dht11_data_ready = 0;
-_Bool water_status_initialized = 0;
-
-//uint32_t time_prev = 0;
-//long long int water_time_prev = 0;
-
-float temp = 0;
-float humidity = 0;
+// ECPH & NUTRIENTS
+_Bool ecph_read = 0;
+_Bool nutrs_deployed = 0;
 
 // DHT11
 uint8_t RHI, RHD, TCI, TCD;
 uint16_t SUM;
-float tCelsius = 0;
+float tCelsius = 0; // Temp.
 float tFahrenheit = 0;
-float RH = 0;
+float RH = 0; // Humidity
+_Bool dht11_data_ready = 0;
 
-//float EC_Value = 0;
-//float PH_Value = 0;
-
-// LIGHTS PROCEDURE WORKING DONT TOUCH
-// ECPH PROCEDURE WORKING DONT TOUCH
-// MIX PROCEDURE WORKING DONT TOUCH
-// WATER LOAD PROCEDURE WORKING DONT TOUCH
-// WATER UNLOAD PROCEDURE WORKING DONT TOUCH
-// WATER READING SENSOR WORKING DONT TOUCH
-
+// MACHINE STATE STATUS
 machine state = INIT;
-//uint16_t water_tank_level;
 
-		char data40[32];
 // GLOBAL TIMERS
 uint32_t send_data_time_prev;
 uint32_t ev_time_prev;
@@ -62,151 +34,181 @@ uint32_t mix_time_prev;
 uint32_t water_proc_time_prev;
 uint32_t lights_proc_time_prev;
 
+// GLOBAL TIMERS FLAGS
 _Bool is_water_counting = 0;
 _Bool is_lights_counting = 0;
 _Bool counting_to_load = 0; // Default cycle
 _Bool counting_to_unload = 1;
 _Bool is_ev_counting = 0;
 
+// WARNING
 uint8_t water_status = 0; // 0 WATER OK; 1 WATER LEVEL TOO LOW; 2 WATER LEVEL TOO HIGH
+uint8_t EC_status = 0; // 0 EC OK; 1 EC TOO LOW; 2 EC TOO HIGH
+uint8_t PH_status = 0; // 0 PH OK; 1 PH TOO LOW; 2 PH TOO HIGH
 
+// LIGHTS CHECK
 _Bool lights_off = 0;
-_Bool ecph_read = 0;
 
-char datahome[32];
-char datadht11[32];
+// BLUE BUTTON
+GPIO_PinState pin_state;
 
 void virtual_main()
 {
+	pin_state = HAL_GPIO_ReadPin(B1_GPIO_Port, B1_Pin);
+
+	if (pin_state == 0)
+	{
+	  state = INIT;
+	}
+
 	switch(state)
 	{
 	case INIT:
+		// TIMER INITIALIZATION
 		__HAL_TIM_SET_COUNTER(&htim2, 0);
+
 		water_proc_time_prev = __HAL_TIM_GET_COUNTER(&htim2);
 		lights_proc_time_prev = __HAL_TIM_GET_COUNTER(&htim2);
 		send_data_time_prev = __HAL_TIM_GET_COUNTER(&htim2);
 		mix_time_prev = __HAL_TIM_GET_COUNTER(&htim2);
 		ev_time_prev = __HAL_TIM_GET_COUNTER(&htim2);
-//		setLight(1);
 
-		counting_to_load = 1; // Default cycle
+		// LIGHTS ON
+		lights_off = 0;
+		setLight(1);
+
+		// RESET PUMPS
+		HAL_GPIO_WritePin(MIX_PUMP_GPIO_Port, MIX_PUMP_Pin, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(LOAD_WATER_PUMP_GPIO_Port, LOAD_WATER_PUMP_Pin, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(UNLOAD_WATER_PUMP_GPIO_Port, UNLOAD_WATER_PUMP_Pin, GPIO_PIN_RESET);
+
+		// STEPPER RESET
+		HAL_GPIO_WritePin(STEP_IN1_GPIO_Port, STEP_IN1_Pin, GPIO_PIN_RESET);   // IN1
+		HAL_GPIO_WritePin(STEP_IN2_GPIO_Port, STEP_IN2_Pin, GPIO_PIN_RESET);   // IN2
+		HAL_GPIO_WritePin(STEP_IN3_GPIO_Port, STEP_IN3_Pin, GPIO_PIN_RESET);   // IN3
+		HAL_GPIO_WritePin(STEP_IN4_GPIO_Port, STEP_IN4_Pin, GPIO_PIN_RESET);   // IN4
+
+		// Default cycle
+		counting_to_load = 1;
 		counting_to_unload = 0;
 
-		 tCelsius = 27.0;
-		 RH = 12.0;
-		 EC = 1.5;
-		 PH = 7.0;
-		 water_status = 0;
+		// ECPH Reading reset
+		ecph_read = 0;
 
 		state = HOME;
 
-//		char datainit[32];
-//		sprintf(datainit, "INIT STATE \n\r");
-//		HAL_UART_Transmit(&huart2, (uint8_t*)datainit, strlen(datainit), HAL_MAX_DELAY);
 		break;
-
 	case HOME:
-//		sprintf(datahome, "HOME STATE \n\r");
-//		HAL_UART_Transmit(&huart2, (uint8_t*)datahome, strlen(datahome), HAL_MAX_DELAY);
-
-//		char datahomeproc[64];
-//		sprintf(datahomeproc, "HOME PROCEDURE - Water Level GT: %lu \n\r", water_level_gt);
-//		HAL_UART_Transmit(&huart2, (uint8_t*)datahomeproc, strlen(datahomeproc), HAL_MAX_DELAY);
-//
-//		char datahomep[64];
-//		sprintf(datahomep, "HOME PROCEDURE - Water Level: %f \n\r", water_level);
-//		HAL_UART_Transmit(&huart2, (uint8_t*)datahomep, strlen(datahomep), HAL_MAX_DELAY);
-
-//		sprintf(data40, "Water Level: %f \n\r", water_level);
-//		HAL_UART_Transmit(&huart2, (uint8_t*)data40, strlen(data40), HAL_MAX_DELAY);
 		/*
 		 * WATER CYCLE: After 5m. LOAD, wait 2m. UNLOAD
 		 */
 
 		// 5 Minutes: 3e+8 Microseconds
-//		if (counting_to_load && __HAL_TIM_GET_COUNTER(&htim2) - water_proc_time_prev >= 1e+7)
-//		{
-//			// Check if the pump is submerged
-//
-//			if (water_level >= MIN_WATER_LVL)
-//			{
-//				if (water_level <= MAX_WATER_LVL)
-//				{
-//					// WATER LOAD PROCEDURE
-//					if (is_water_ready)
-//					{
-//						state = WATER_LOAD_PROCEDURE;
-//					}
-//					else
-//					{
-//						if (!ecph_read)
-//						{
-//							state = ECPH_PROCEDURE;
-//						}
-//						else
-//						{
-//							if (EC < EC_SETPOINT)
-//							{
-//								state = MIX_PROCEDURE;
-//							}
-//							else
-//							{
-//								is_water_ready = 1;
-//								ecph_read = 0;
-//							}
-//						}
-//					}
-//
-//					water_status = 0;
-//				}
-//				else
-//				{
-//					water_status = 2;
-//				}
-//			}
-//			else
-//			{
-//				water_status = 1;
-//			}
-//		}
-//		// 2 Minutes: 1.2e+8 Microseconds
-//		if (counting_to_unload && __HAL_TIM_GET_COUNTER(&htim2) - water_proc_time_prev >= 1e+7)
-//		{
-//			state = WATER_UNLOAD_PROCEDURE;
-//		}
+		if (counting_to_load && __HAL_TIM_GET_COUNTER(&htim2) - water_proc_time_prev >= 1e+7) // 10s
+		{
+			// Check if the pump is submerged
+
+			if (water_level >= MIN_WATER_LVL)
+			{
+				if (water_level <= MAX_WATER_LVL)
+				{
+					// WATER LOAD PROCEDURE
+					if (is_water_ready)
+					{
+						EC_status = 0;
+						state = WATER_LOAD_PROCEDURE;
+					}
+					else
+					{
+						if (!ecph_read)
+						{
+							state = ECPH_PROCEDURE;
+						}
+						else
+						{
+							if (EC < EC_LOWER_BOUND)
+							{
+								EC_status = 1;
+								state = MIX_PROCEDURE;
+							}
+							else
+							{
+								if (EC > EC_UPPER_BOUND)
+								{
+									// WARNING: Add Water
+									EC_status = 2;
+								}
+								else
+								{
+									if (PH == PH_SETPOINT)
+									{
+										PH_status = 0;
+										is_water_ready = 1;
+									}
+									else
+									{
+										if (PH > PH_SETPOINT)
+											PH_status = 2;
+										else
+											PH_status = 1;
+									}
+								}
+								ecph_read = 0;
+							}
+						}
+					}
+
+					water_status = 0;
+				}
+				else
+				{
+					water_status = 2;
+				}
+			}
+			else
+			{
+				water_status = 1;
+			}
+		}
+		// 2 Minutes: 1.2e+8 Microseconds
+		if (counting_to_unload && __HAL_TIM_GET_COUNTER(&htim2) - water_proc_time_prev >= 5e+6)
+		{
+			state = WATER_UNLOAD_PROCEDURE;
+		}
 
 		/*
-		 * LIGHTS CYCLE: 5 Minutes Switch ON/OFF
+		 * LIGHTS CYCLE: 4h Switch ON/OFF
 		 */
 
-//		if (__HAL_TIM_GET_COUNTER(&htim2) - lights_proc_time_prev >= 3e+7)
-//		{
-//			if (!lights_off)
-//			{
-//				lights_off = 1;
-//				setLight(0);
-//			}
-//			else
-//			{
-//				lights_off = 0;
-//				setLight(1);
-//			}
-//
-//			lights_proc_time_prev = __HAL_TIM_GET_COUNTER(&htim2);
-//		}
+		if (__HAL_TIM_GET_COUNTER(&htim2) - lights_proc_time_prev >= 3e+7)
+		{
+			if (!lights_off)
+			{
+				lights_off = 1;
+				setLight(0);
+			}
+			else
+			{
+				lights_off = 0;
+				setLight(1);
+			}
+
+			lights_proc_time_prev = __HAL_TIM_GET_COUNTER(&htim2);
+		}
 
 
 		/*
-		 * SEND DATA
+		 * DATA SEND: Every 5 minutes
 		 */
+
 		if (__HAL_TIM_GET_COUNTER(&htim2) - send_data_time_prev >= 1e+7)
 		{
-//			if (!dht11_data_ready)
-//			{
-//				state = DHT11_PROCEDURE;
-//			}
-//			else
-//			{
+			if (!dht11_data_ready)
+			{
+				state = DHT11_PROCEDURE;
+			}
+			else
+			{
 				// tCelsius;RH;EC;PH;WATER_STATUS;
 				// tCelsius: float
 				// RH: float
@@ -214,19 +216,14 @@ void virtual_main()
 				// PH: uint8_t
 				// Water_status: Int
 
-				uint8_t max_size = snprintf(NULL, 0, "%f;%f;%f;%u;%u;\n\r", tCelsius, RH, EC, PH, water_status) + 1;
-
+				uint8_t max_size = snprintf(NULL, 0, "%f;%f;%f;%u;%u;%u;%u;\n\r", tCelsius, RH, EC, PH, water_status, EC_status, PH_status) + 1;
 				char data_to_send[max_size];
-				sprintf(data_to_send, "%f;%f;%f;%u;%u; \n\r", tCelsius, RH, EC, PH, water_status);
+				sprintf(data_to_send, "%f;%f;%f;%u;%u;%u;%u;\n\r", tCelsius, RH, EC, PH, water_status, EC_status, PH_status);
 				HAL_UART_Transmit(&huart1, (uint8_t*)data_to_send, strlen(data_to_send), HAL_MAX_DELAY);
+				HAL_UART_Transmit(&huart2, (uint8_t*)data_to_send, strlen(data_to_send), HAL_MAX_DELAY);
 
-				char datatt[32];
-				sprintf(datatt, "Data Size: %i \n\r", max_size);
-				HAL_UART_Transmit(&huart2, (uint8_t*)datatt, strlen(datatt), HAL_MAX_DELAY);
-
-				dht11_data_ready = 0;
 				send_data_time_prev = __HAL_TIM_GET_COUNTER(&htim2);
-//			}
+			}
 		}
 		break;
 
@@ -245,7 +242,6 @@ void virtual_main()
 				tFahrenheit = tCelsius * 9/5 + 32;
 				RH = (float)RHI + (float)(RHD/10.0);
 
-				state = HOME;
 				dht11_data_ready = 1;
 
 				char data4[32];
@@ -254,38 +250,35 @@ void virtual_main()
 				char data5[32];
 				sprintf(data5, "RH: %f \n\r", RH);
 				HAL_UART_Transmit(&huart2, (uint8_t*)data5, strlen(data5), HAL_MAX_DELAY);
-
-				// Can use tCelsius, tFahrenheit and RH for any purposes
 			}
 		}
+		state = HOME;
 		break;
 
 	case WATER_LOAD_PROCEDURE:
+			// NEW READ FROM THE WATER LEVEL GT SENSOR
+			HAL_ADC_Start_IT(&hadc1);
 
-				HAL_ADC_Start_IT(&hadc1);
-				char datawlp[64];
-				sprintf(datawlp, "WATER LOAD PROCEDURE - Water Level GT: %lui \n\r", water_level_gt);
-				HAL_UART_Transmit(&huart2, (uint8_t*)datawlp, strlen(datawlp), HAL_MAX_DELAY);
+			char datawlp[64];
+			sprintf(datawlp, "WATER LOAD PROCEDURE - Water Level GT: %lui \n\r", water_level_gt);
+			HAL_UART_Transmit(&huart2, (uint8_t*)datawlp, strlen(datawlp), HAL_MAX_DELAY);
 
-				if (water_level_gt >= 180)
-				{
-					// STOP THE PUMP
-					HAL_GPIO_WritePin(LOAD_WATER_PUMP_GPIO_Port, LOAD_WATER_PUMP_Pin, GPIO_PIN_RESET);
+			if (water_level_gt > ROOT_LEVEL)
+			{
+				// STOP THE PUMP
+				HAL_GPIO_WritePin(LOAD_WATER_PUMP_GPIO_Port, LOAD_WATER_PUMP_Pin, GPIO_PIN_RESET);
 
-					// UPDATE THE VALUES
-					is_water_ready = 0;
-					counting_to_load = 0;
-					counting_to_unload = 1;
-					water_proc_time_prev = __HAL_TIM_GET_COUNTER(&htim2);
-//					loading = 0;
-
-					state = HOME;
-				}
-				else
-				{
-					HAL_GPIO_WritePin(LOAD_WATER_PUMP_GPIO_Port, LOAD_WATER_PUMP_Pin, GPIO_PIN_SET);
-				}
-//			}
+				// UPDATE THE VALUES
+				is_water_ready = 0;
+				counting_to_load = 0;
+				counting_to_unload = 1;
+				water_proc_time_prev = __HAL_TIM_GET_COUNTER(&htim2);
+			}
+			else
+			{
+				HAL_GPIO_WritePin(LOAD_WATER_PUMP_GPIO_Port, LOAD_WATER_PUMP_Pin, GPIO_PIN_SET);
+			}
+			state = HOME;
 			break;
 
 	case(WATER_UNLOAD_PROCEDURE):
@@ -296,7 +289,7 @@ void virtual_main()
 			sprintf(datawulp, "WATER UNLOAD PROCEDURE - Water Level GT: %lu \n\r", water_level_gt);
 			HAL_UART_Transmit(&huart2, (uint8_t*)datawulp, strlen(datawulp), HAL_MAX_DELAY);
 
-			if (water_level_gt < 100)
+			if (water_level_gt < MIN_GT_WATER_LEVEL)
 			{
 				// STOP THE PUMP
 				HAL_GPIO_WritePin(UNLOAD_WATER_PUMP_GPIO_Port, UNLOAD_WATER_PUMP_Pin, GPIO_PIN_RESET);
@@ -310,20 +303,17 @@ void virtual_main()
 			{
 				HAL_GPIO_WritePin(UNLOAD_WATER_PUMP_GPIO_Port, UNLOAD_WATER_PUMP_Pin, GPIO_PIN_SET);
 			}
-
 			state = HOME;
 			break;
 
 	case(ECPH_PROCEDURE):
-
 			if (!ec_initialized)
 			{
 				ec_init();
 			}
-			// CHECK FOR 5 SECONDS
 			else
 			{
-//				ec_read(&hadc3);
+				ec_read(&hadc3);
 				ph_read(&hadc3);
 
 				char data2[32];
@@ -337,14 +327,13 @@ void virtual_main()
 				ecph_read = 1;
 				ec_initialized = 0;
 			}
-
 			state = HOME;
 			break;
 
 	case (MIX_PROCEDURE):
 			if (!nutrs_deployed)
 			{
-				stepper_step_angle(360, 1, 10);
+				stepper_step_angle(1, 10);
 
 				char data1[32];
 				sprintf(data1, "NUTRS DEPLOYED \n\r");
@@ -363,21 +352,11 @@ void virtual_main()
 
 					HAL_GPIO_WritePin(MIX_PUMP_GPIO_Port, MIX_PUMP_Pin, GPIO_PIN_RESET);
 
-					EC = 1.5;
-
 					nutrs_deployed = 0;
 					ecph_read = 0;
 				}
 			}
 			state = HOME;
-			break;
-
-	case(LIGHTS_PROCEDURE):
-//			setLight(1);
-						HAL_ADC_Start_IT(&hadc1);
-						char datatest[64];
-						sprintf(datatest, "WATER LOAD PROCEDURE - Water Level GT: %lu \n\r", water_level_gt);
-						HAL_UART_Transmit(&huart2, (uint8_t*)datatest, strlen(datatest), HAL_MAX_DELAY);
 			break;
 	default:
 //		// ELECTROVALVE RESET
@@ -393,8 +372,8 @@ void virtual_main()
 //		is_default_check = 1;
 //		state = ECPH_PROCEDURE;
 
-		// LIGHTS OFF
-		setLight(0);
+//		// LIGHTS OFF
+//		setLight(0);
 		break;
 	}
 }

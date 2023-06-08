@@ -13,7 +13,6 @@ float distance_hc = 0;						//distance measured
 _Bool pwm_state = 0;					//variable to measured pwm state
 _Bool prev_pwm_state = 0;				//variable to measured previous pwm state
 _Bool echo_state = 0;					//variable to store echo state
-float water_level = 0;
 
 void setup_pwm(void)
 {

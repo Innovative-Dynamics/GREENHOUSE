@@ -18,93 +18,9 @@ float RWater = 0;
 float adPH = 0;
 float VdropPH = 0;
 uint8_t PH = 0;
-//double somma = 0;
-//double media = 0;
-
-//_Bool reading_ec = 0;
-//_Bool reading_ph = 0;
 
 _Bool is_counting_ec = 0;
 _Bool ec_initialized = 0;
-
-//_Bool ec_value_readed = 0;
-//
-//_Bool ph_value_readed = 0;
-
-//
-//extern long long int time_prev;
-
-
-//_Bool is_ec_initialized ()
-//{
-//	return ec_initialized;
-//}
-//
-//
-//void reset_ec_initialized ()
-//{
-//	ec_initialized = 0;
-//}
-
-
-//_Bool read_ec ()
-//{
-//	return reading_ec;
-//}
-
-
-//void set_adEC (float adEC_val)
-//{
-//	adEC = adEC_val;
-//}
-
-
-//_Bool is_ec_value_readed ()
-//{
-//	return ec_value_readed;
-//}
-//
-//
-//void reset_is_ec_value_readed ()
-//{
-//	ec_value_readed = 0;
-//}
-
-
-//_Bool read_ph ()
-//{
-//	return reading_ph;
-//}
-
-
-//void set_adPH (float adPH_val)
-//{
-//	adPH = adPH_val;
-//}
-
-
-//_Bool is_ph_value_readed ()
-//{
-//	return ph_value_readed;
-//}
-//
-//
-//void reset_is_ph_value_readed ()
-//{
-//	ph_value_readed = 0;
-//}
-
-
-//float get_EC ()
-//{
-//	return EC;
-//}
-//
-//
-//float get_PH ()
-//{
-//	return PH;
-//}
 
 uint32_t ecph_time_prev;
 
@@ -174,39 +90,37 @@ void ph_read (ADC_HandleTypeDef* hadc)
 	VdropPH = (Vin * adPH) / 1024.0; //converto bit(adPH) in tensione(VdropPH) (precision_ADC = 2^10 -> = 1024)
 
 	if (VdropPH == 0)
-		PH = 0;
+		PH = 3.0;
 	else if (VdropPH > 0 && VdropPH <= ph_interval)
-		PH = 1;
+		PH = 3.5;
 	else if (VdropPH > ph_interval && VdropPH <= ph_interval*2)
-		PH = 2;
+		PH = 4.0;
 	else if (VdropPH > ph_interval*2 && VdropPH <= ph_interval*3)
-		PH = 3;
+		PH = 4.5;
 	else if (VdropPH > ph_interval*3 && VdropPH <= ph_interval*4)
-		PH = 4;
+		PH = 5.0;
 	else if (VdropPH > ph_interval*4 && VdropPH <= ph_interval*5)
-		PH = 5;
+		PH = 5.5;
 	else if (VdropPH > ph_interval*5 && VdropPH <= ph_interval*6)
-		PH = 6;
+		PH = 6.0;
 	else if (VdropPH > ph_interval*6 && VdropPH <= ph_interval*7)
-		PH = 7;
+		PH = 6.5;
 	else if (VdropPH > ph_interval*7 && VdropPH <= ph_interval*8)
-		PH = 8;
+		PH = 7.0;
 	else if (VdropPH > ph_interval*8 && VdropPH <= ph_interval*9)
-		PH = 9;
+		PH = 7.5;
 	else if (VdropPH > ph_interval*9 && VdropPH <= ph_interval*10)
-		PH = 10;
+		PH = 8.0;
 	else if (VdropPH > ph_interval*10 && VdropPH <= ph_interval*11)
-		PH = 11;
+		PH = 8.5;
 	else if (VdropPH > ph_interval*11 && VdropPH <= ph_interval*12)
-		PH = 12;
+		PH = 9.0;
 	else if (VdropPH > ph_interval*12 && VdropPH <= ph_interval*13)
-		PH = 13;
+		PH = 9.5;
 	else
-	{
-		PH = 14;
-	}
+		PH = 10.0;
 
-//	ph_value_readed = 1;
+
 }
 
 void set_ec_channel ()
