@@ -7,36 +7,46 @@
 
 #include "dht11.h"
 
-//uint8_t RHI, RHD, TCI, TCD, SUM;
-uint32_t pMillis, cMillis;
-//float tCelsius = 0;
-//float tFahrenheit = 0;
-//float RH = 0;
+uint32_t startTime, endTime;
 
 uint8_t DHT11_Read (void)
 {
-  uint8_t a,b;
-  for (a=0;a<8;a++)
+  uint8_t result = 0;
+
+  for (uint8_t bitIndex = 0; bitIndex < 8; bitIndex++)
   {
-    pMillis = __HAL_TIM_GET_COUNTER(&htim2);
-    cMillis = __HAL_TIM_GET_COUNTER(&htim2);
-    while (!(HAL_GPIO_ReadPin (DHT11_GPIO_Port, DHT11_Pin)) && pMillis + 20000 > cMillis)
-    {  // wait for the pin to go high
-      cMillis = __HAL_TIM_GET_COUNTER(&htim2);
-    }
-    delay_us (40);   // wait for 40 us
-    if (!(HAL_GPIO_ReadPin (DHT11_GPIO_Port, DHT11_Pin)))   // if the pin is low
-      b&= ~(1<<(7-a));
-    else
-      b|= (1<<(7-a));
-    pMillis = __HAL_TIM_GET_COUNTER(&htim2);
-    cMillis = __HAL_TIM_GET_COUNTER(&htim2);
-    while ((HAL_GPIO_ReadPin (DHT11_GPIO_Port, DHT11_Pin)) && pMillis + 20000 > cMillis)
-    {  // wait for the pin to go low
-      cMillis = __HAL_TIM_GET_COUNTER(&htim2);
-    }
+	startTime = __HAL_TIM_GET_COUNTER(&htim2);
+	endTime = __HAL_TIM_GET_COUNTER(&htim2);
+
+	while (!(HAL_GPIO_ReadPin(DHT11_GPIO_Port, DHT11_Pin)) && startTime + 20000 > endTime)
+	{
+	  // Wait for the pin to go high
+	  endTime = __HAL_TIM_GET_COUNTER(&htim2);
+	}
+
+	delay_us(40); // Wait for 40 us
+
+	if (!(HAL_GPIO_ReadPin(DHT11_GPIO_Port, DHT11_Pin)))
+	{
+	  // If the pin is low
+	  result &= ~(1 << (7 - bitIndex));
+	}
+	else
+	{
+	  result |= (1 << (7 - bitIndex));
+	}
+
+	startTime = __HAL_TIM_GET_COUNTER(&htim2);
+	endTime = __HAL_TIM_GET_COUNTER(&htim2);
+
+	while ((HAL_GPIO_ReadPin(DHT11_GPIO_Port, DHT11_Pin)) && startTime + 20000 > endTime)
+	{
+	  // Wait for the pin to go low
+	  endTime = __HAL_TIM_GET_COUNTER(&htim2);
+	}
   }
-  return b;
+
+  return result;
 }
 
 uint8_t DHT11_Start (void)
@@ -61,11 +71,11 @@ uint8_t DHT11_Start (void)
 	  delay_us (80);
     if ((HAL_GPIO_ReadPin (DHT11_GPIO_Port, DHT11_Pin))) Response = 1;
   }
-  pMillis = __HAL_TIM_GET_COUNTER(&htim2);
-  cMillis = __HAL_TIM_GET_COUNTER(&htim2);
-  while ((HAL_GPIO_ReadPin (DHT11_GPIO_Port, DHT11_Pin)) && pMillis + 20000 > cMillis)
+  startTime = __HAL_TIM_GET_COUNTER(&htim2);
+  endTime = __HAL_TIM_GET_COUNTER(&htim2);
+  while ((HAL_GPIO_ReadPin (DHT11_GPIO_Port, DHT11_Pin)) && startTime + 20000 > endTime)
   {
-    cMillis = __HAL_TIM_GET_COUNTER(&htim2);
+    endTime = __HAL_TIM_GET_COUNTER(&htim2);
   }
   return Response;
 }

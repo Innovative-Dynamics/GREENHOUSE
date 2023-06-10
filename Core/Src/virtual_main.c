@@ -230,13 +230,6 @@ void virtual_main()
 			}
 			else
 			{
-				// tCelsius;RH;EC;PH;WATER_STATUS;
-				// tCelsius: float
-				// RH: float
-				// EC: float
-				// PH: uint8_t
-				// Water_status: Int
-
 				uint8_t max_size = snprintf(NULL, 0, "%f;%f;%f;%f;%u;%u;%u;\n\r", tCelsius, RH, EC, PH, water_status, EC_status, PH_status) + 1;
 				char data_to_send[max_size];
 				sprintf(data_to_send, "%f;%f;%f;%f;%u;%u;%u;\n\r", tCelsius, RH, EC, PH, water_status, EC_status, PH_status);
@@ -258,7 +251,6 @@ void virtual_main()
 			SUM = DHT11_Read(); // Check sum
 			if (RHI + RHD + TCI + TCD == SUM)
 			{
-				// Can use RHI and TCI for any purposes if whole number only needed
 				tCelsius = (float)TCI + (float)(TCD/10.0);
 				tFahrenheit = tCelsius * 9/5 + 32;
 				RH = (float)RHI + (float)(RHD/10.0);
@@ -310,7 +302,7 @@ void virtual_main()
 			sprintf(datawcc, "WATER UNLOAD PROCEDURE - Water Level GT: %lu \n\r", water_level_gt);
 			HAL_UART_Transmit(&huart2, (uint8_t*)datawcc, strlen(datawcc), HAL_MAX_DELAY);
 
-			if (__HAL_TIM_GET_COUNTER(&htim2) - water_proc_time_prev >= 45e+6)
+			if (__HAL_TIM_GET_COUNTER(&htim2) - water_proc_time_prev >= 40e+6)
 			{
 				// STOP THE PUMP
 				HAL_GPIO_WritePin(UNLOAD_WATER_PUMP_GPIO_Port, UNLOAD_WATER_PUMP_Pin, GPIO_PIN_RESET);
@@ -354,7 +346,7 @@ void virtual_main()
 				ecph_read = 1;
 				ec_initialized = 0;
 			}
-//			state = HOME;
+			state = HOME;
 			break;
 
 	case (MIX_PROCEDURE):
@@ -379,12 +371,9 @@ void virtual_main()
 					HAL_UART_Transmit(&huart2, (uint8_t*)data1, strlen(data1), HAL_MAX_DELAY);
 
 					HAL_GPIO_WritePin(MIX_PUMP_GPIO_Port, MIX_PUMP_Pin, GPIO_PIN_RESET);
-//
-//					EC = 1.3;
-//					PH = 5.5;
 
 					nutrs_deployed = 0;
-					ecph_read = 0; // RICORDARSI DI MODIFICARE QUESTO
+					ecph_read = 0;
 				}
 			}
 			state = HOME;

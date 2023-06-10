@@ -78,10 +78,6 @@ void stepper_step_angle(int direction, int rpm)
 
 	float deltaEC = EC_SETPOINT - EC;
 
-	char data1[32];
-	sprintf(data1, "deltaEC: %f \n\r", deltaEC);
-	HAL_UART_Transmit(&huart2, (uint8_t*)data1, strlen(data1), HAL_MAX_DELAY);
-
 	float angle = 720 * deltaEC;
 
 	int numberofsequences = (int)(angle / anglepersequence);
