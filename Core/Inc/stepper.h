@@ -15,7 +15,7 @@
 #include "tim.h"
 #include "stdio.h"
 
-#define stepsperrev 4096
+#define stepsperrev 4096  //Define the number of steps the motor takes for 1 revolution
 #define anglepersequence 0.703125 // 360 = 512 sequences
 
 void stepper_set_rpm(int);  // Set rpm--> max 13, min 1,,,  went to 14 rev/min
