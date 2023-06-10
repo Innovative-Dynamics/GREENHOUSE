@@ -137,7 +137,7 @@ void HAL_TIM_PWM_PulseFinishedCallback(TIM_HandleTypeDef *htim){
 
 }
 
-void setLight(int check){
+void setLight(_Bool check){
 	if (check == 1){
 
 		for(int i = 0; i<LEDUsed; i++){

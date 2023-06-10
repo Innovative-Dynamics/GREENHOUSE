@@ -11,29 +11,20 @@
 
 #define HIGH_LIGHT_THREESHOLD 200
 #define LOW_LIGHT_THREESHOLD 100
-#define voltageSource 3.3  //Voltage divider VCC ref
+#define voltageSource 3.3  // VCC
 #define luxFactor = 500000
 #define LEDUsed 10
-#define USE_BRIGHTNESS 1 //1 if you want to control brightness, 0 if not
+#define USE_BRIGHTNESS 1 // 1 BRIGHTNESS ON; 0 BRIGHTNESS OFF
 #define PI 3.14
-
-typedef enum{Low, Med, High} lightThreeshold; // <30%, da 30 a 70, >70%
 
 void readNaturalLight(void);
 void ws2812SendData (void);
 void setBrightness (int value);
-void setLed(int LEDnum, int color[3]); //da sostituire con write led
-void setLight(int check);
+void setLed(int LEDnum, int color[3]);
+void setLight(_Bool check);
 
-// VARIABLES
-extern int violetColor400[3];
-extern int redColor680[3];
-extern int whiteBlueColor460[3];
-extern int nullColor[3];
-extern int dataSentFlag;
+typedef enum{Low, Med, High} lightThreeshold;
 
-extern float B;
-extern float m;
 extern float voltage_value;
 
 #endif // INC_LIGHTLOWLEVELPRCEDURE_H_

@@ -27,12 +27,12 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
 
 	if (hadc == &hadc2)
 	{
-		// LIGHTS PROCEDURE
 		// READ FROM THE PHOTORESISTENCE
 		voltage_value = HAL_ADC_GetValue(hadc);
 	}
 	else if (hadc == &hadc1)
 	{
+		// READ FROM THE WATER LEVEL SENSOR
 		water_level_gt = HAL_ADC_GetValue(hadc);
 	}
 }

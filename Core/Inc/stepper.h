@@ -25,7 +25,6 @@ void stepper_step_angle(int, int);
 _Bool are_nutrs_deployed ();
 void reset_are_nutrs_deployed ();
 
-// VARIABLES
 extern _Bool nutrs_deployed;
 
 #endif /* INC_STEPPER_H_ */

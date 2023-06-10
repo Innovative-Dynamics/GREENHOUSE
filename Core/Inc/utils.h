@@ -12,18 +12,10 @@
 #include "gpio.h"
 #include "adc.h"
 #include "tim.h"
-//#include "ecph.h"
 #include "ultrasonic.h"
 #include "lights.h"
 #include "virtual_main.h"
 
-//_Bool water_reading_done ();
-//void reset_water_reading_done ();
-//float get_water_value ();
-
-//_Bool lights_reading_done ();
-//void reset_lights_reading_done ();
-//float get_lights_voltage_value ();
 void delay_us (uint32_t);
 
 #endif /* INC_UTILS_H_ */
