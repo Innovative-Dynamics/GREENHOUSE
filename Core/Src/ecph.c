@@ -2,14 +2,12 @@
  * ecph.c
  *
  *  Created on: May 29, 2023
- *      Author: envy0
+ *      Author: Innovative Dynamics
  */
-
 
 #include "ecph.h"
 
 // EC METER VARS.
-float EC = 0;
 float adEC = 0;
 float VdropEC = 0;
 float RWater = 0;
@@ -17,24 +15,21 @@ float RWater = 0;
 // PH METER VARS.
 float adPH = 0;
 float VdropPH = 0;
-float PH = 0;
 
+uint32_t ecph_time_prev = 0;
 _Bool is_counting_ec = 0;
-_Bool ec_initialized = 0;
 
-uint32_t ecph_time_prev;
 
 void ec_init ()
 {
 	if (is_counting_ec == 0)
 	{
-		ecph_time_prev = __HAL_TIM_GET_COUNTER(&htim2);
 		is_counting_ec = 1;
-		HAL_GPIO_WritePin(EC_WRITE_GPIO_Port, EC_WRITE_Pin, GPIO_PIN_SET); // Imposto il pin ECPower(PC0 -> A5) a livello alto: 3.3v
+		HAL_GPIO_WritePin(EC_WRITE_GPIO_Port, EC_WRITE_Pin, GPIO_PIN_SET);
+		ecph_time_prev = __HAL_TIM_GET_COUNTER(&htim2);
 	}
 	else
 	{
-
 		if (__HAL_TIM_GET_COUNTER(&htim2) - ecph_time_prev >= 6000000)
 		{
 			is_counting_ec = 0;
@@ -45,54 +40,32 @@ void ec_init ()
 
 void ec_read (ADC_HandleTypeDef* hadc)
 {
+	set_ec_channel(); // Set the ADC to read on the EC channel
 
-	set_ec_channel();
-
-	HAL_ADC_Start(hadc); // avvia la conversione ADC da EC_Read(PC1 -> A4)
-	HAL_ADC_PollForConversion(hadc, 100); // attendi la fine della conversione
-	adEC = HAL_ADC_GetValue(hadc);//Leggo il valore analog
+	HAL_ADC_Start(hadc); // ADC Conversion
+	HAL_ADC_PollForConversion(hadc, 100);
+	adEC = HAL_ADC_GetValue(hadc);
 	HAL_ADC_Stop(hadc);
 
-	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_RESET); //Imposto il pin ECPower(PC0 -> A5) a livello basso: 0v
+	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_RESET);
 
-	VdropEC= (Vin *adEC) / 1024.0; //converto tot bit(adEC) in tensione(VdropEC) (precision_ADC = 2^10 -> = 1024)
-	RWater = (VdropEC*R1) / (Vin-VdropEC); // prova ad aumentare la precisione a 2^12
-	EC = 1000 / (RWater*K1); //mS/cm
-
-//	char data4[32];
-//	sprintf(data4, "EC Pre Gestione: %f \n\r", EC);
-//	HAL_UART_Transmit(&huart2, (uint8_t*)data4, strlen(data4), HAL_MAX_DELAY);
-//
-//    // GESTIONE DATI EC
-//	if (EC <= 0.3)
-//	{
-//		EC = 0;
-//	}
-//	else if (EC >= 0.3 && EC <= 0.9)
-//	{
-//		EC = EC - 0.2;
-//	}
-//	else if (EC > 1.5 && EC <= 1.6)
-//	{
-//	    EC = EC + 0.25;
-//	}
-//	else if (EC > 1.6 && EC <= 1.7)
-//	{
-//	    EC = EC + 0.35;
-//	}
+	VdropEC= (Vin *adEC) / 1024.0; // From voltage to bit
+	RWater = (VdropEC*R1) / (Vin-VdropEC);
+	EC = 1000 / (RWater*K1); // mS/cm
 }
 
 void ph_read (ADC_HandleTypeDef* hadc)
 {
-	set_ph_channel();
+	set_ph_channel(); // Set the ADC to read on the pH channel
 
-	HAL_ADC_Start(hadc);
+	HAL_ADC_Start(hadc); // ADC Conversion
 	HAL_ADC_PollForConversion(hadc, 100);
 	adPH = HAL_ADC_GetValue(hadc);
 	HAL_ADC_Stop(hadc);
 
-	VdropPH = (Vin * adPH) / 1024.0; //converto bit(adPH) in tensione(VdropPH) (precision_ADC = 2^10 -> = 1024)
+	VdropPH = (Vin * adPH) / 1024.0; // From voltage to bit
 
+	// pH values conversion
 	if (VdropPH == 0)
 		PH = 3.0;
 	else if (VdropPH > 0 && VdropPH <= ph_interval)
@@ -123,12 +96,6 @@ void ph_read (ADC_HandleTypeDef* hadc)
 		PH = 9.5;
 	else
 		PH = 10.0;
-
-//	char data1[32];
-//	sprintf(data1, "PH: %u \n\r", PH);
-//	HAL_UART_Transmit(&huart2, (uint8_t*)data1, strlen(data1), HAL_MAX_DELAY);
-
-
 }
 
 void set_ec_channel ()

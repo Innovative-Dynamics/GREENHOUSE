@@ -2,24 +2,27 @@
  * virtual_main.c
  *
  *  Created on: May 29, 2023
- *      Author: envy0
+ *      Author: Innovative Dynamics
  */
 
 #include "virtual_main.h"
 
-// ADC REASDINGS
+// ADC READINGS
 float water_level = 0;
 uint32_t water_level_gt = 0;
 
-// ECPH & NUTRIENTS
+// ECPH
 _Bool ecph_read = 0;
 _Bool nutrs_deployed = 0;
-_Bool is_water_ready = 0; // To check for nutrients
+_Bool is_water_ready = 0;
+float PH = 0; // pH
+float EC = 0; // EC
+_Bool ec_initialized = 0;
 
 // DHT11
 uint8_t RHI, RHD, TCI, TCD;
 uint16_t SUM;
-float tCelsius = 0; // Temp.
+float tCelsius = 0; // Temperature
 float tFahrenheit = 0;
 float RH = 0; // Humidity
 _Bool dht11_data_ready = 0;
@@ -59,7 +62,7 @@ char data_home[512];
 
 void virtual_main()
 {
-	// BLUE BUTTON GREENHOUSE RESET
+	// Board blue push button to reset the greenhouse
 	pin_state = HAL_GPIO_ReadPin(B1_GPIO_Port, B1_Pin);
 
 	if (pin_state == 0)
@@ -70,10 +73,9 @@ void virtual_main()
 	switch(state)
 	{
 	case INIT:
-
 		// LIGHTS
 		lights_status = 0;
-		setLight(0);
+		setLight(0); // To avoid ambiguous behaviors
 		setLight(1);
 
 		// PUMPS RESET
@@ -118,7 +120,8 @@ void virtual_main()
 		sprintf(data_home, "HOME PROCEDURE - Water Level: %f\n\r", water_level);
 		HAL_UART_Transmit(&huart2, (uint8_t*)data_home, strlen(data_home), HAL_MAX_DELAY);
 
-		if (counting_to_load && __HAL_TIM_GET_COUNTER(&htim2) - water_proc_time_prev >= WATER_LOAD_TIME) // 10s
+		// LOAD PROCEDURE
+		if (counting_to_load && __HAL_TIM_GET_COUNTER(&htim2) - water_proc_time_prev >= WATER_LOAD_TIME)
 		{
 		    if (water_level >= MIN_WATER_LVL && water_level <= MAX_WATER_LVL)
 		    {
@@ -132,13 +135,13 @@ void virtual_main()
 		        }
 		        else if (EC < EC_LOWER_BOUND)
 		        {
-		        	// WARNING: EC TOO LOW
+		        	// WARNING: ec too low
 		            warning = 1;
-		            state = MIX_PROCEDURE;
+		            state = MIX_PROCEDURE; // Need to add nutrients
 		        }
 		        else if (EC > EC_UPPER_BOUND)
 		        {
-		            // WARNING: EC TOO HIGH
+		            // WARNING: ec too high
 		        	warning = 1;
 		            ecph_read = 0;
 		        }
@@ -149,13 +152,13 @@ void virtual_main()
 		        }
 		        else if (PH > PH_SETPOINT)
 		        {
-		        	// WARNING: PH TOO HIGH
+		        	// WARNING: pH too high
 		        	warning = 1;
 		            ecph_read = 0;
 		        }
 		        else
 		        {
-		        	// WARNING: PH TOO LOW
+		        	// WARNING: pH too low
 		        	warning = 1;
 		            ecph_read = 0;
 		        }
@@ -163,17 +166,18 @@ void virtual_main()
 		    }
 		    else if (water_level > MAX_WATER_LVL)
 		    {
-		    	// WARNING: WATER TOO HIGH
+		    	// WARNING: Water too high
 		        water_status = 2;
 		        warning = 1;
 		    }
 		    else
 		    {
-		    	// WARNING: WATER TOO LOW
+		    	// WARNING: Water too low
 		        water_status = 1;
 		        warning = 1;
 		    }
 		}
+		// UNLOAD PROCEDURE
 		if (counting_to_unload && __HAL_TIM_GET_COUNTER(&htim2) - water_proc_time_prev >= WATER_UNLOAD_TIME)
 		{
 			state = WATER_UNLOAD_PROCEDURE;
@@ -186,11 +190,11 @@ void virtual_main()
 
 		if (__HAL_TIM_GET_COUNTER(&htim2) - lights_proc_time_prev >= LIGHTS_SWITCH_TIME)
 		{
-			lights_status = !lights_status;
-			lights_proc_time_prev = __HAL_TIM_GET_COUNTER(&htim2);
+			lights_status = !lights_status; // Switch the lights state
+			lights_proc_time_prev = __HAL_TIM_GET_COUNTER(&htim2); // Lights timer update
 		}
 
-		setLight(lights_status);
+		setLight(lights_status); // Continuously called to adapt the light brightness
 
 		/*
 		 * DATA SEND
@@ -200,6 +204,7 @@ void virtual_main()
 		{
 			if (!dht11_data_ready)
 			{
+				// Before sending the data, update the temperature and humidity levels
 				state = DHT11_PROCEDURE;
 			}
 			else
@@ -212,7 +217,7 @@ void virtual_main()
 				// DEBUG
 				HAL_UART_Transmit(&huart2, (uint8_t*)data_to_send, strlen(data_to_send), HAL_MAX_DELAY);
 
-				send_data_time_prev = __HAL_TIM_GET_COUNTER(&htim2);
+				send_data_time_prev = __HAL_TIM_GET_COUNTER(&htim2); // Timer update
 				if (warning)
 					warning = 0;
 			}
@@ -233,7 +238,7 @@ void virtual_main()
 				tFahrenheit = tCelsius * 9/5 + 32;
 				RH = (float)RHI + (float)(RHD/10.0);
 
-				dht11_data_ready = 1;
+				dht11_data_ready = 1; // DHT11 Data is ready
 
 				// DEBUG
 				char data_t_celsius[512];
@@ -248,7 +253,7 @@ void virtual_main()
 		break;
 
 	case WATER_LOAD_PROCEDURE:
-			HAL_ADC_Start_IT(&hadc1);
+			HAL_ADC_Start_IT(&hadc1); // Grow Tank water level update
 
 			// DEBUG
 			char datawlp[512];
@@ -259,10 +264,10 @@ void virtual_main()
 			{
 				HAL_GPIO_WritePin(LOAD_WATER_PUMP_GPIO_Port, LOAD_WATER_PUMP_Pin, GPIO_PIN_RESET);
 
-				is_water_ready = 0;
+				is_water_ready = 0; // Water is not ready anymore after the load procedure
 				counting_to_load = 0;
-				counting_to_unload = 1;
-				water_proc_time_prev = __HAL_TIM_GET_COUNTER(&htim2);
+				counting_to_unload = 1; // Start counting for the unload procedure
+				water_proc_time_prev = __HAL_TIM_GET_COUNTER(&htim2); // Timer update
 			}
 			else
 			{
@@ -272,7 +277,8 @@ void virtual_main()
 			break;
 
 	case(WATER_UNLOAD_PROCEDURE):
-			HAL_ADC_Start_IT(&hadc1);
+			HAL_ADC_Start_IT(&hadc1); // Grow Tank water level update
+
 			// DEBUG
 			char datawulp[512];
 			sprintf(datawulp, "WATER UNLOAD PROCEDURE - Water Level GT: %lu\n\r", water_level_gt);
@@ -283,9 +289,9 @@ void virtual_main()
 
 				HAL_GPIO_WritePin(UNLOAD_WATER_PUMP_GPIO_Port, UNLOAD_WATER_PUMP_Pin, GPIO_PIN_RESET);
 
-				counting_to_load = 1;
+				counting_to_load = 1; // Start counting for the load procedure
 				counting_to_unload = 0;
-				water_proc_time_prev = __HAL_TIM_GET_COUNTER(&htim2);
+				water_proc_time_prev = __HAL_TIM_GET_COUNTER(&htim2); // Timer update
 			}
 			else
 			{
@@ -297,13 +303,14 @@ void virtual_main()
 	case(ECPH_PROCEDURE):
 			if (!ec_initialized)
 			{
-				ec_init();
+				ec_init(); // ec sensor initialization
 			}
 			else
 			{
-				ec_read(&hadc3);
-				ph_read(&hadc3);
+				ec_read(&hadc3); // EC value update
+				ph_read(&hadc3); // pH value update
 
+				// Simulation purpose
 				if (count >= 1)
 				{
 					EC = 1.5;
@@ -327,7 +334,7 @@ void virtual_main()
 	case (MIX_PROCEDURE):
 			if (!nutrs_deployed)
 			{
-				stepper_step_angle(1, 10);
+				stepper_step_angle(1, 10); // Nutrients deployment
 
 				// DEBUG
 				char data_stepper[512];
@@ -349,7 +356,7 @@ void virtual_main()
 					sprintf(data_mixing, "MIXED\n\r");
 					HAL_UART_Transmit(&huart2, (uint8_t*)data_mixing, strlen(data_mixing), HAL_MAX_DELAY);
 
-					count++;
+					count++; // Simulation purpose
 					nutrs_deployed = 0;
 					ecph_read = 0;
 				}
@@ -357,9 +364,11 @@ void virtual_main()
 			state = HOME;
 			break;
 	case TEST:
+		// Only for testing
 		break;
 
 	default:
+		// Ambiguous behavior = reset the greenhouse
 		state = INIT;
 		break;
 	}

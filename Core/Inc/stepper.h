@@ -2,7 +2,7 @@
  * stepper.h
  *
  *  Created on: May 29, 2023
- *      Author: envy0
+ *      Author: Innovative Dynamics
  */
 
 #ifndef INC_STEPPER_H_
@@ -15,7 +15,7 @@
 #include "tim.h"
 #include "stdio.h"
 
-#define stepsperrev 4096  //Define the number of steps the motor takes for 1 revolution
+#define stepsperrev 4096  // Number of steps the motor takes for 1 revolution
 #define anglepersequence 0.703125 // 360 = 512 sequences
 
 void stepper_set_rpm(int);  // Set rpm--> max 13, min 1,,,  went to 14 rev/min
@@ -24,7 +24,5 @@ void stepper_step_angle(int, int);
 
 _Bool are_nutrs_deployed ();
 void reset_are_nutrs_deployed ();
-
-extern _Bool nutrs_deployed;
 
 #endif /* INC_STEPPER_H_ */

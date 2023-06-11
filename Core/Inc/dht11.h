@@ -2,7 +2,7 @@
  * dht11.h
  *
  *  Created on: Jun 5, 2023
- *      Author: envy0
+ *      Author: Innovative Dymanics
  */
 
 #ifndef INC_DHT11_H_
@@ -14,9 +14,6 @@
 #include "utils.h"
 
 uint8_t DHT11_Start (void);
-//_Bool DHT11_Check_Response ();
 uint8_t DHT11_Read (void);
-
-extern _Bool dht11_init;
 
 #endif /* INC_DHT11_H_ */

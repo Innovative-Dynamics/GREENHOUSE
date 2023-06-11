@@ -1,8 +1,8 @@
 /*
- * virtual_,ain.h
+ * virtual_main.h
  *
  *  Created on: May 29, 2023
- *      Author: envy0
+ *      Author: Innovative Dynamics
  */
 
 #ifndef INC_VIRTUAL_MAIN_H_
@@ -29,8 +29,8 @@
 #define WATER_UNLOAD_TIME 1e+7
 #define LIGHTS_SWITCH_TIME 12e+7
 #define SEND_DATA_TIME 6e+7
-#define ROOT_LEVEL 195
-#define MIN_GT_WATER_LEVEL 100
+#define ROOT_LEVEL 195 // Max water level in the grow tank
+#define MIN_GT_WATER_LEVEL 100 // Min water level in the grow tank
 
 typedef enum{WATER_LOAD_PROCEDURE,
 			WATER_UNLOAD_PROCEDURE,
@@ -46,5 +46,8 @@ void virtual_main();
 extern uint32_t water_level_gt;
 extern float water_level;
 extern _Bool nutrs_deployed;
+extern float EC;
+extern float PH;
+extern _Bool ec_initialized;
 
 #endif /* INC_VIRTUAL_MAIN_H_ */

@@ -1,3 +1,10 @@
+/*
+ * lights.h
+ *
+ *  Created on: May 29, 2023
+ *      Author: Innovative Dynamics
+ */
+
 #ifndef INC_LIGHTLOWLEVELPRCEDURE_H_
 #define INC_LIGHTLOWLEVELPRCEDURE_H_
 
@@ -14,7 +21,7 @@
 #define voltageSource 3.3  // VCC
 #define luxFactor = 500000
 #define LEDUsed 10
-#define USE_BRIGHTNESS 1 // 1 BRIGHTNESS ON; 0 BRIGHTNESS OFF
+#define USE_BRIGHTNESS 1 // 1 Brightness ON; 0 Brightness OFF
 #define PI 3.14
 
 void readNaturalLight(void);
